@@ -1,5 +1,5 @@
 
-# StockFlow — Inventory & Product Management Platform
+# StockFlow - Inventory & Product Management Platform
 
 StockFlow is a full-stack Inventory & Product Management Platform built using ASP.NET Core and Angular.
 

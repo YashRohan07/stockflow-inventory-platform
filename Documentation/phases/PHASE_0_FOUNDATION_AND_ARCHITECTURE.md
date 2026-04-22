@@ -40,9 +40,9 @@ Instead, the foundation of the project was established.
 
 ### Domain Design
 
-* Product entity designed
-* User entity designed
-* UserRole enum defined
+* Product entity designed with stock-related attributes (quantity, pricing, purchase tracking)
+* User entity designed for role-based access control
+* UserRole enum defined for authorization logic
 
 ---
 
@@ -92,6 +92,7 @@ Instead, the foundation of the project was established.
 * domain vs infrastructure
 * request flow basics
 * role-based system thinking
+* thinking in terms of system boundaries and responsibilities
 
 ---
 
@@ -167,6 +168,7 @@ This phase ensures:
 * better debugging
 * scalability
 * professional project structure
+* creates a strong foundation for scalable feature development in later phases
 
 ---
 

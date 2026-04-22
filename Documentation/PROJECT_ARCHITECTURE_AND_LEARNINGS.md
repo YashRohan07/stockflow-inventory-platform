@@ -2,8 +2,6 @@
 
 ## 1. Project Overview
 
-### What This Project Is
-
 StockFlow is a full-stack Inventory & Product Management Platform built using ASP.NET Core and Angular.
 
 It is designed as a learning-first, industry-aligned project focusing on backend architecture, system design, and scalable development practices.
@@ -14,7 +12,6 @@ It is designed as a learning-first, industry-aligned project focusing on backend
 
 * to learn ASP.NET Core and Angular
 * to understand real-world backend architecture
-* to build a portfolio-quality project
 * to improve system design skills
 
 ---
@@ -25,6 +22,7 @@ It is designed as a learning-first, industry-aligned project focusing on backend
 * manage inventory/stock data
 * provide role-based access
 * support reporting
+* ensure structured, scalable, and maintainable data handling
 
 ---
 
@@ -35,13 +33,12 @@ It is designed as a learning-first, industry-aligned project focusing on backend
 * ASP.NET Core Web API
 * Entity Framework Core
 * SQL Server
-* JWT Authentication (planned)
+* JWT Authentication
 
 ### Frontend
 
 * Angular
 * TypeScript
-* SCSS
 
 ---
 
@@ -49,18 +46,20 @@ It is designed as a learning-first, industry-aligned project focusing on backend
 
 ### Backend
 
-Layered architecture:
+The backend follows a layered architecture.
 
-* API Layer
-* Application Layer
-* Domain Layer
-* Infrastructure Layer
+Each layer is responsible for a specific concern to ensure separation of responsibilities and maintainability.
+
+* API Layer → Handles HTTP requests and responses
+* Application Layer → Contains business logic
+* Domain Layer → Defines core entities and business models
+* Infrastructure Layer → Handles database and external services
 
 ---
 
 ### Frontend
 
-Angular-based structure with feature-based organization (planned).
+The frontend is built using Angular and will follow a feature-based modular structure for scalability and maintainability.
 
 ---
 
@@ -68,43 +67,63 @@ Angular-based structure with feature-based organization (planned).
 
 Phase 0 focuses on:
 
-* structure
-* architecture
+* project structure
+* architecture planning
 * entity design
-* documentation
+* documentation setup
 
 ---
 
 ## 4. Engineering Decisions
 
-### Why Layered Architecture
-
-* clean structure
-* better maintainability
-* easier scaling
-
----
-
 ### Why ASP.NET Core + Angular
 
-* strong backend + structured frontend
+* strong backend capabilities
+* structured and scalable frontend
 * suitable for full-stack development
 
 ---
 
-### Why Documentation Early
+### Why Layered Architecture
 
-* improves clarity
-* helps in learning
-* makes project professional
+* clean separation of concerns
+* improved maintainability
+* scalability for future features
 
 ---
 
-## 5. Current Learning Focus
+## Key Architectural Principles
 
-* architecture
+* separation of concerns
+* layered design
 * modular structure
-* domain design
-* planning before implementation
+* domain-first thinking
 
 ---
+
+## 5. API and Response Design
+
+To maintain consistency across the system, a standard API response format will be used.
+
+### Success Response Format
+
+```json
+{
+  "success": true,
+  "message": "Operation successful",
+  "data": {},
+  "errors": []
+}
+```
+
+### Error Response Format
+
+```json
+{
+  "success": false,
+  "message": "Validation failed",
+  "errors": ["Error message"]
+}
+```
+
+This approach ensures predictable responses for frontend integration and improves debugging and maintainability.

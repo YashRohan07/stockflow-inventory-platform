@@ -1,3 +1,4 @@
+using StockFlow.Domain.Enums;
 namespace StockFlow.Domain.Entities;
 
 public class User

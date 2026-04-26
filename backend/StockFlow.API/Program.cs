@@ -1,41 +1,44 @@
+using StockFlow.API.Middleware;
+using StockFlow.Infrastructure.DependencyInjection;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// Add controller support
+// Controllers will handle HTTP requests (GET, POST, PUT, DELETE)
+builder.Services.AddControllers();
+
+// Add Swagger services
+// This provides API documentation and testing UI in browser
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// Register Infrastructure services (Database, DbContext, etc.)
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Enable Swagger only in development environment
+// We usually disable Swagger in production for security reasons
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
+// Global error handling middleware
+// This catches all unhandled exceptions and returns clean JSON response
+app.UseMiddleware<ExceptionMiddleware>();
+
+// Request logging middleware
+// This logs every request (method, path, status code, execution time)
+app.UseMiddleware<RequestLoggingMiddleware>();
+
+// Redirect HTTP requests to HTTPS
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+// Map controller routes
+// Example: /api/health → HealthController
+app.MapControllers();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
-
+// Start the application
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

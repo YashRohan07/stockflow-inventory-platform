@@ -12,8 +12,22 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Register Infrastructure services (Database, DbContext, etc.)
+// Register Infrastructure services
+// This includes AppDbContext and SQL Server connection
 builder.Services.AddInfrastructureServices(builder.Configuration);
+
+// Add CORS policy
+// This allows Angular frontend to call this backend API
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:4200") // Angular app URL
+            .AllowAnyHeader()                     // Allow request headers
+            .AllowAnyMethod();                    // Allow GET, POST, PUT, DELETE
+    });
+});
 
 var app = builder.Build();
 
@@ -32,6 +46,10 @@ app.UseMiddleware<ExceptionMiddleware>();
 // Request logging middleware
 // This logs every request (method, path, status code, execution time)
 app.UseMiddleware<RequestLoggingMiddleware>();
+
+// Enable CORS middleware
+// Must be before MapControllers so controllers can accept frontend requests
+app.UseCors("AllowFrontend");
 
 // Redirect HTTP requests to HTTPS
 app.UseHttpsRedirection();

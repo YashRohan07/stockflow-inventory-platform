@@ -1,0 +1,15 @@
+<section class="dashboard">
+  <h2>Dashboard</h2>
+
+  <p>Backend Status:</p>
+
+  <strong>{{ healthMessage() }}</strong>
+
+  @if (backendStatus()) {
+  <p>Status: {{ backendStatus() }}</p>
+  }
+
+  @if (applicationName()) {
+  <p>Application: {{ applicationName() }}</p>
+  }
+</section>

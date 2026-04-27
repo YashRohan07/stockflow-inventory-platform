@@ -6,25 +6,26 @@
 
 StockFlow is a full-stack Inventory & Product Management Platform built using ASP.NET Core and Angular.
 
-It is designed as a learning-first, industry-aligned project focusing on backend architecture, system design, and scalable development practices.
+It is designed as a learning-first, industry-aligned project focusing on backend architecture, frontend structure, system design, and scalable development practices.
 
 ---
 
 ### Why This Project Was Built
 
-- to learn ASP.NET Core and Angular
-- to understand real-world backend architecture
-- to improve system design skills
+* to learn ASP.NET Core and Angular together
+* to understand real-world full-stack architecture
+* to improve system design thinking
+* to build a production-ready project structure
 
 ---
 
 ### Problem It Solves
 
-- manage product records
-- manage inventory and stock data
-- provide role-based access (planned)
-- support reporting (planned)
-- ensure structured and scalable data handling
+* manage product records
+* manage inventory and stock data
+* provide role-based access (planned)
+* support reporting (planned)
+* ensure clean, structured, and scalable data handling
 
 ---
 
@@ -32,167 +33,223 @@ It is designed as a learning-first, industry-aligned project focusing on backend
 
 ### Backend
 
-- ASP.NET Core Web API
-- Entity Framework Core
-- SQL Server
-- JWT Authentication (planned for future phase)
+* ASP.NET Core Web API
+* Entity Framework Core
+* SQL Server
+* JWT Authentication (planned)
+
+---
 
 ### Frontend
 
-- Angular
-- TypeScript
+* Angular (Standalone)
+* TypeScript
+* Angular Router
+* HttpClient
 
 ---
 
 ## 3. High-Level Architecture
 
-### Backend
-
-The backend follows a layered architecture.
-
-Each layer has a specific responsibility to keep the system clean and maintainable.
-
-- API Layer → handles HTTP requests and responses
-- Application Layer → contains business logic
-- Domain Layer → defines core entities (Product, User)
-- Infrastructure Layer → handles database and external services
-
 ---
 
-### Frontend
+### Backend Architecture
 
-The frontend is built using Angular and will follow a feature-based modular structure for scalability and maintainability.
-
----
-
-## 4. Backend Request Flow (Phase 1)
-
-The backend uses a middleware-based request pipeline.
-
-### Request Flow
-
+```text
+API Layer → Application Layer → Domain Layer
+        ↘ Infrastructure Layer (Database)
 ```
 
-Client (Browser / Postman)
+* API → handles HTTP requests
+* Application → business logic (future)
+* Domain → entities (Product, User)
+* Infrastructure → database (EF Core + SQL Server)
+
+---
+
+### Frontend Architecture
+
+```text
+src/app
+│
+├── core
+│   ├── services
+│   ├── guards
+│   └── interceptors
+│
+├── shared
+│   ├── components
+│   ├── models
+│   └── utils
+│
+└── features
+    ├── dashboard
+    ├── products
+    ├── auth
+    └── reports
+```
+
+* core → global logic (API service, auth, interceptors)
+* shared → reusable components and models
+* features → business modules
+
+---
+
+## 4. Full Stack Request Flow
+
+```text
+User (Browser)
 ↓
-ExceptionMiddleware
+Angular Component
 ↓
-RequestLoggingMiddleware
+ApiService
+↓
+HttpClient
+↓
+ASP.NET Core API
+↓
+Middleware (Exception + Logging)
 ↓
 Controller
 ↓
-DbContext
+DbContext (EF Core)
 ↓
 Database
 ↓
 Response (JSON)
-
-````
-
-### Explanation
-
-1. The client sends a request
-2. Middleware processes the request first
-3. Controller handles the request
-4. Data is processed using DbContext
-5. Database returns data
-6. Response is sent back as JSON
+↓
+Frontend UI Update
+```
 
 ---
 
-### Key Components
+## 5. Frontend ↔ Backend Sequence Flow
 
-- **ExceptionMiddleware**  
-  Handles all errors in one place and returns a clean response
-
-- **RequestLoggingMiddleware**  
-  Logs request details like method, path, status code, and time
-
-- **Controller**  
-  Handles API endpoints and request logic
-
-- **AppDbContext**  
-  Connects the application with the database using EF Core
-
----
-
-## 5. Current Phase
-
-Phase 1 focuses on building a strong backend foundation.
-
-Completed:
-
-- ASP.NET Core Web API setup
-- Program.cs configuration
-- Middleware pipeline implementation
-- Dependency Injection setup
-- EF Core + SQL Server integration
-- AppDbContext creation
-- database migrations
-- Health endpoint
-- Swagger integration
-- global exception handling
-- request logging middleware
-- standard API response structure
+```text
+User opens Dashboard
+↓
+Angular Router loads Dashboard Component
+↓
+Component calls ApiService
+↓
+ApiService sends HTTP request (/api/health)
+↓
+Backend receives request
+↓
+Controller processes request
+↓
+Response returned (ApiResponse)
+↓
+Frontend receives response
+↓
+Signal updates
+↓
+UI updates automatically
+```
 
 ---
 
-## 6. Engineering Decisions
+## 6. Current Phase
+
+The project has completed:
+
+### Phase 1 — Backend Foundation 
+
+* API setup
+* middleware pipeline
+* EF Core + database
+* Dependency Injection
+* logging and error handling
+
+---
+
+### Phase 2 — Frontend Foundation 
+
+* Angular structure setup
+* routing system
+* feature-based architecture
+* API service
+* environment configuration
+* frontend-backend integration
+* strong typing with models
+* product UI structure
+
+---
+
+## 7. Engineering Decisions
+
+---
 
 ### Why ASP.NET Core + Angular
 
-- strong backend support
-- scalable frontend structure
-- suitable for full-stack applications
+* strong backend ecosystem
+* scalable frontend architecture
+* widely used in industry
 
 ---
 
-### Why Layered Architecture
+### Why Layered Architecture (Backend)
 
-- separates responsibilities
-- improves maintainability
-- supports scalability
+* separates responsibilities
+* improves maintainability
+* supports scalability
 
 ---
 
-### Why Dependency Injection
+### Why Feature-Based Structure (Frontend)
 
-- avoids manual object creation
-- reduces tight coupling
-- improves testability
+* organizes code by business features
+* easy to scale
+* easy to understand
+
+---
+
+### Why ApiService
+
+* centralizes API calls
+* avoids repeated code
+* easier maintenance
+
+---
+
+### Why Environment Configuration
+
+* avoids hardcoded URLs
+* supports development and production
+
+---
+
+### Why Strong Typing (Models)
+
+* improves code safety
+* reduces runtime errors
+* provides better developer experience
 
 ---
 
 ### Why Middleware
 
-- centralizes cross-cutting concerns
-- avoids repeated code
-- improves maintainability
+* handles logging and errors centrally
+* avoids repeated logic
+* keeps controllers clean
 
 ---
 
-### Why EF Core
+## 8. Key Architectural Principles
 
-- reduces need for manual SQL
-- supports migrations
-- integrates well with ASP.NET Core
-
----
-
-## 7. Key Architectural Principles
-
-- separation of concerns
-- layered architecture
-- dependency injection
-- middleware-based request handling
-- modular structure
-- domain-first design
+* separation of concerns
+* layered architecture
+* dependency injection
+* middleware-based request handling
+* modular frontend structure
+* strong typing
+* reusable services
 
 ---
 
-## 8. API and Response Design
+## 9. API and Response Design
 
-To maintain consistency, all API responses follow a standard structure.
+All API responses follow a standard structure.
 
 ### Success Response
 
@@ -203,7 +260,7 @@ To maintain consistency, all API responses follow a standard structure.
   "data": {},
   "errors": null
 }
-````
+```
 
 ---
 
@@ -223,30 +280,35 @@ To maintain consistency, all API responses follow a standard structure.
 ### Why This Approach
 
 * frontend always knows where data is
-* responses are predictable
+* predictable responses
 * easier debugging
 * cleaner API design
 
 ---
 
-## 9. What I Learned
+## 10. What I Learned
 
-* how backend systems are structured
-* how middleware pipeline works
-* how Dependency Injection works
-* how EF Core connects code to database
-* how logging and error handling improve debugging
-* how to design clean and consistent APIs
+* how backend and frontend connect
+* how Angular routing works
+* how API communication works
+* how to structure frontend architecture
+* how middleware works in backend
+* how to use Dependency Injection
+* how to design scalable systems
+* importance of strong typing
+* importance of clean project structure
 
 ---
 
-## 10. Why This Architecture Matters
+## 11. Why This Architecture Matters
 
 This architecture ensures:
 
 * clean and organized code
-* easy debugging and maintenance
-* scalable system design
-* reusable backend structure for future projects
+* easy debugging
+* scalable design
+* reusable structure
+* production-ready foundation
 
 ---
+

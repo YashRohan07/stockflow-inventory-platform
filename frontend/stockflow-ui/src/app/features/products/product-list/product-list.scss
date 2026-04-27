@@ -1,0 +1,24 @@
+/* Product list page container */
+.product-list {
+  padding: 24px;
+}
+
+/* Product table styling */
+table {
+  width: 100%;
+  margin-top: 16px;
+  border-collapse: collapse;
+}
+
+/* Table cells */
+th,
+td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+/* Table header */
+th {
+  background-color: #f3f4f6;
+}

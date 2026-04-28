@@ -1,42 +1,44 @@
-// Import Routes type from Angular Router
 import { Routes } from '@angular/router';
 
-// Import page components
 import { Dashboard } from './features/dashboard/dashboard/dashboard';
 import { ProductList } from './features/products/product-list/product-list';
 import { Reports } from './features/reports/reports/reports';
-import { Login } from './features/auth/login/login';
+import { LoginComponent } from './features/auth/login/login';
 
-// Define all application routes here
+import { authGuard } from './core/guards/auth-guard';
+import { loginGuard } from './core/guards/login-guard';
+
+// Application routes
 export const routes: Routes = [
   {
-    // Empty path means root URL: http://localhost:4200
+    // Root URL redirects to login
     path: '',
-
-    // Redirect root URL to dashboard page
-    redirectTo: 'dashboard',
-
-    // Match only the full empty path
+    redirectTo: 'login',
     pathMatch: 'full'
   },
   {
-    // Dashboard page route
-    path: 'dashboard',
-    component: Dashboard
-  },
-  {
-    // Products page route
-    path: 'products',
-    component: ProductList
-  },
-  {
-    // Reports page route
-    path: 'reports',
-    component: Reports
-  },
-  {
-    // Login page route
+    // Public login route
+    // If user is already logged in, loginGuard redirects to dashboard
     path: 'login',
-    component: Login
+    component: LoginComponent,
+    canActivate: [loginGuard]
+  },
+  {
+    // Protected dashboard route
+    path: 'dashboard',
+    component: Dashboard,
+    canActivate: [authGuard]
+  },
+  {
+    // Protected products route
+    path: 'products',
+    component: ProductList,
+    canActivate: [authGuard]
+  },
+  {
+    // Protected reports route
+    path: 'reports',
+    component: Reports,
+    canActivate: [authGuard]
   }
 ];

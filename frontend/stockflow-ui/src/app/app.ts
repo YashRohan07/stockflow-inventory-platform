@@ -1,18 +1,28 @@
-// Import Component from Angular core
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 
-// Import RouterLink for navigation links
-// Import RouterOutlet to display routed pages
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { AuthService } from './core/services/auth.service';
 
-// Root component of the Angular application
 @Component({
-  selector: 'app-root',              // HTML tag used to load this component
-  standalone: true,                  // Modern Angular standalone component
-  imports: [RouterOutlet, RouterLink], // Enable routing and router links
-  templateUrl: './app.html',         // HTML file for this component
-  styleUrl: './app.scss'             // SCSS file for this component
+  selector: 'app-root',
+  standalone: true,
+  imports: [CommonModule, RouterOutlet, RouterLink],
+  templateUrl: './app.html',
+  styleUrl: './app.scss'
 })
 export class App {
-  // No logic needed here yet
+  constructor(
+    // Public so template can access authService.isLoggedIn()
+    public authService: AuthService,
+
+    // Router used for redirect after logout
+    private router: Router
+  ) { }
+
+  // Logout user and redirect to login page
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
 }

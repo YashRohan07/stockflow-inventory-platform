@@ -10,29 +10,47 @@ using Microsoft.Extensions.DependencyInjection;
 // Importing AppDbContext (our main database class)
 using StockFlow.Infrastructure.Persistence;
 
-// Namespace for dependency injection setup in Infrastructure layer
+// Importing interfaces from Application layer
+using StockFlow.Application.Interfaces.Services;
+using StockFlow.Application.Interfaces.Repositories;
+
+// Importing implementations from Infrastructure layer
+using StockFlow.Infrastructure.Authentication;
+using StockFlow.Infrastructure.Repositories;
+
 namespace StockFlow.Infrastructure.DependencyInjection;
 
-// Static class because we are creating extension methods
+// Static class for registering all Infrastructure services
 public static class InfrastructureServiceRegistration
 {
-    // This method is used to register Infrastructure services
-    // It extends IServiceCollection so we can call it in Program.cs
     public static IServiceCollection AddInfrastructureServices(
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        // Register AppDbContext in Dependency Injection container
-        // This tells ASP.NET Core how to create AppDbContext when needed
+        // 🔹 Register AppDbContext (Database Context)
+        // This configures EF Core to use SQL Server with connection string
         services.AddDbContext<AppDbContext>(options =>
-
-            // Configure EF Core to use SQL Server
             options.UseSqlServer(
-
-                // Read connection string from appsettings.json
                 configuration.GetConnectionString("DefaultConnection")));
 
-        // Return services so we can chain more registrations if needed
+        // 🔹 Register Password Hasher Service
+        // Handles hashing and verifying passwords securely
+        services.AddScoped<IPasswordHasher, PasswordHasherService>();
+
+        // 🔹 Register JWT Token Generator
+        // Generates JWT tokens after successful login
+        services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+
+        // 🔹 Register User Repository
+        // Application layer will use IUserRepository
+        // Infrastructure provides the actual implementation
+        services.AddScoped<IUserRepository, UserRepository>();
+
+        // 🔹 Register Database Seeder
+        // Seeds default Admin and Member users on application startup
+        services.AddScoped<DatabaseSeeder>();
+
+        // Return services so we can chain registrations
         return services;
     }
 }

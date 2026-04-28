@@ -1,26 +1,17 @@
-<!-- Main application layout -->
-<div class="app-container">
+<!-- Main navigation bar -->
+<nav class="navbar">
+  <!-- Show these links only when user is logged in -->
+  <a *ngIf="authService.isLoggedIn()" routerLink="/dashboard">Dashboard</a>
+  <a *ngIf="authService.isLoggedIn()" routerLink="/products">Products</a>
+  <a *ngIf="authService.isLoggedIn()" routerLink="/reports">Reports</a>
 
-  <!-- Simple navigation bar -->
-  <nav class="navbar">
+  <!-- Logout button -->
+  <button *ngIf="authService.isLoggedIn()"
+          type="button"
+          (click)="logout()">
+    Logout
+  </button>
+</nav>
 
-    <!-- Navigate to Dashboard page -->
-    <a routerLink="/dashboard">Dashboard</a>
-
-    <!-- Navigate to Products page -->
-    <a routerLink="/products">Products</a>
-
-    <!-- Navigate to Reports page -->
-    <a routerLink="/reports">Reports</a>
-
-    <!-- Navigate to Login page -->
-    <a routerLink="/login">Login</a>
-
-  </nav>
-
-  <!-- Page content will load here based on current route -->
-  <main class="page-content">
-    <router-outlet></router-outlet>
-  </main>
-
-</div>
+<!-- Routed pages will load here -->
+<router-outlet></router-outlet>

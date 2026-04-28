@@ -4,48 +4,52 @@
 
 ## 1. Project Overview
 
+### 1.1 What This Project Is
+
 StockFlow is a full-stack Inventory & Product Management Platform built using ASP.NET Core and Angular.
 
-It is designed as a learning-first, industry-aligned project focusing on backend architecture, frontend structure, system design, and scalable development practices.
+It is designed as a learning-focused but industry-standard project that demonstrates backend architecture, frontend structure, authentication, and system design thinking.
 
 ---
 
-### Why This Project Was Built
+### 1.2 Why This Project Was Built
 
-* to learn ASP.NET Core and Angular together
-* to understand real-world full-stack architecture
-* to improve system design thinking
-* to build a production-ready project structure
+* to learn backend and frontend together
+* to understand real-world system architecture
+* to practice clean code and SOLID principles
+* to build a production-style full-stack application
 
 ---
 
-### Problem It Solves
+### 1.3 Problem It Solves
 
 * manage product records
-* manage inventory and stock data
-* provide role-based access (planned)
-* support reporting (planned)
-* ensure clean, structured, and scalable data handling
+* manage inventory and stock
+* secure system using authentication
+* control access using roles (Admin / Member)
+* provide structured and scalable system design
 
 ---
 
 ## 2. Technology Stack
 
-### Backend
+### 2.1 Backend
 
 * ASP.NET Core Web API
 * Entity Framework Core
 * SQL Server
-* JWT Authentication (planned)
+* JWT Authentication
+* Middleware (Logging + Exception Handling)
 
 ---
 
-### Frontend
+### 2.2 Frontend
 
 * Angular (Standalone)
 * TypeScript
 * Angular Router
 * HttpClient
+* Signals (state handling)
 
 ---
 
@@ -53,21 +57,21 @@ It is designed as a learning-first, industry-aligned project focusing on backend
 
 ---
 
-### Backend Architecture
+### 3.1 Backend Architecture
 
 ```text
 API Layer → Application Layer → Domain Layer
-        ↘ Infrastructure Layer (Database)
+        ↘ Infrastructure Layer (Database, JWT, Hashing)
 ```
 
 * API → handles HTTP requests
-* Application → business logic (future)
-* Domain → entities (Product, User)
-* Infrastructure → database (EF Core + SQL Server)
+* Application → business logic
+* Domain → core entities
+* Infrastructure → database, authentication
 
 ---
 
-### Frontend Architecture
+### 3.2 Frontend Architecture
 
 ```text
 src/app
@@ -78,7 +82,6 @@ src/app
 │   └── interceptors
 │
 ├── shared
-│   ├── components
 │   ├── models
 │   └── utils
 │
@@ -89,8 +92,8 @@ src/app
     └── reports
 ```
 
-* core → global logic (API service, auth, interceptors)
-* shared → reusable components and models
+* core → global logic
+* shared → reusable code
 * features → business modules
 
 ---
@@ -98,217 +101,294 @@ src/app
 ## 4. Full Stack Request Flow
 
 ```text
-User (Browser)
+User
 ↓
 Angular Component
 ↓
-ApiService
+AuthService / ApiService
 ↓
 HttpClient
 ↓
 ASP.NET Core API
 ↓
-Middleware (Exception + Logging)
+Middleware (Logging + Exception)
 ↓
 Controller
 ↓
-DbContext (EF Core)
+Service
+↓
+Repository / DbContext
 ↓
 Database
 ↓
-Response (JSON)
+Response
 ↓
 Frontend UI Update
 ```
 
 ---
 
-## 5. Frontend ↔ Backend Sequence Flow
+## 5. Authentication Flow (JWT)
 
 ```text
-User opens Dashboard
+User enters email + password
 ↓
-Angular Router loads Dashboard Component
+Frontend sends login request
 ↓
-Component calls ApiService
+Backend validates credentials
 ↓
-ApiService sends HTTP request (/api/health)
+JWT token generated
 ↓
-Backend receives request
+Token returned to frontend
 ↓
-Controller processes request
+Stored in localStorage
 ↓
-Response returned (ApiResponse)
+Interceptor attaches token
 ↓
-Frontend receives response
+Backend validates token
 ↓
-Signal updates
-↓
-UI updates automatically
+Access granted or denied
 ```
 
 ---
 
-## 6. Current Phase
-
-The project has completed:
-
-### Phase 1 — Backend Foundation 
-
-* API setup
-* middleware pipeline
-* EF Core + database
-* Dependency Injection
-* logging and error handling
+## 6. Phase-by-Phase Summary
 
 ---
 
-### Phase 2 — Frontend Foundation 
+### Phase 0 — Foundation
 
-* Angular structure setup
+* project structure setup
+* layered architecture design
+* frontend setup
+* domain modeling
+
+---
+
+### Phase 1 — Backend Foundation
+
+* ASP.NET Core setup
+* EF Core integration
+* SQL Server database
+* middleware pipeline
+* logging and exception handling
+* API response structure
+
+---
+
+### Phase 2 — Frontend Foundation
+
+* Angular setup
 * routing system
 * feature-based architecture
 * API service
 * environment configuration
 * frontend-backend integration
-* strong typing with models
-* product UI structure
+* strong typing
 
 ---
 
-## 7. Engineering Decisions
+### Phase 3 — Authentication & Authorization
+
+* JWT authentication
+* login system
+* password hashing
+* role-based access control
+* authorization policies
+* Swagger Bearer auth
+* frontend login integration
+* token storage
+* route guards
+* interceptor
+* logout flow
+* token expiry handling
 
 ---
 
-### Why ASP.NET Core + Angular
-
-* strong backend ecosystem
-* scalable frontend architecture
-* widely used in industry
+## 7. Key Engineering Decisions
 
 ---
 
-### Why Layered Architecture (Backend)
+### Use Layered Architecture
 
-* separates responsibilities
-* improves maintainability
-* supports scalability
-
----
-
-### Why Feature-Based Structure (Frontend)
-
-* organizes code by business features
-* easy to scale
-* easy to understand
+* clean separation of responsibilities
+* scalable structure
 
 ---
 
-### Why ApiService
+### Use JWT Authentication
 
-* centralizes API calls
-* avoids repeated code
-* easier maintenance
-
----
-
-### Why Environment Configuration
-
-* avoids hardcoded URLs
-* supports development and production
+* stateless
+* scalable
+* suitable for SPA
 
 ---
 
-### Why Strong Typing (Models)
+### Use Service + Repository Pattern
 
-* improves code safety
-* reduces runtime errors
-* provides better developer experience
-
----
-
-### Why Middleware
-
-* handles logging and errors centrally
-* avoids repeated logic
-* keeps controllers clean
+* business logic separated
+* easier testing
 
 ---
 
-## 8. Key Architectural Principles
+### Use Angular Feature-Based Structure
+
+* modular frontend
+* scalable
+
+---
+
+### Use Interceptors
+
+* automatic token attachment
+* cleaner API calls
+
+---
+
+### Use Guards
+
+* frontend route protection
+* better UX
+
+---
+
+## 8. Alternatives Considered
+
+---
+
+### Layered vs Clean Architecture
+
+* Clean Architecture → more complex
+* Layered → simpler and practical
+
+**Chosen:** Layered Architecture
+
+---
+
+### JWT vs Session-Based Auth
+
+* Session → stateful, less scalable
+* JWT → stateless, scalable
+
+**Chosen:** JWT
+
+---
+
+### SQL vs NoSQL
+
+* SQL → structured data, relationships
+* NoSQL → flexible but not needed
+
+**Chosen:** SQL Server
+
+---
+
+## 9. Cross-Cutting Engineering Practices
 
 * separation of concerns
-* layered architecture
+* clean code principles
+* validation strategy
+* structured error handling
+* logging
+* security (JWT)
+* consistent API design
+
+---
+
+## 10. Key Challenges and Solutions
+
+---
+
+### Challenge: Swagger token not working
+
+**Solution:** fixed Bearer configuration
+
+---
+
+### Challenge: 401 vs 403 confusion
+
+**Solution:** tested with Admin and Member roles
+
+---
+
+### Challenge: frontend-backend integration
+
+**Solution:** used AuthService + models
+
+---
+
+### Challenge: route security
+
+**Solution:** implemented guards
+
+---
+
+## 11. What I Learned
+
+---
+
+### Backend
+
+* JWT authentication
+* middleware pipeline
+* EF Core
 * dependency injection
-* middleware-based request handling
-* modular frontend structure
-* strong typing
-* reusable services
 
 ---
 
-## 9. API and Response Design
+### Frontend
 
-All API responses follow a standard structure.
-
-### Success Response
-
-```json
-{
-  "success": true,
-  "message": "Operation successful",
-  "data": {},
-  "errors": null
-}
-```
+* Angular architecture
+* routing
+* interceptors
+* guards
 
 ---
 
-### Error Response
+### System Design
 
-```json
-{
-  "success": false,
-  "message": "Something went wrong",
-  "data": null,
-  "errors": null
-}
-```
+* request flow
+* stateless systems
+* role-based access
+* client-server interaction
 
 ---
 
-### Why This Approach
+## 12. Mistakes and Improvements
 
-* frontend always knows where data is
-* predictable responses
-* easier debugging
-* cleaner API design
+* initially no route protection
+* login page accessible after login
+* token expiry not handled
 
----
+**Improved by:**
 
-## 10. What I Learned
-
-* how backend and frontend connect
-* how Angular routing works
-* how API communication works
-* how to structure frontend architecture
-* how middleware works in backend
-* how to use Dependency Injection
-* how to design scalable systems
-* importance of strong typing
-* importance of clean project structure
+* adding guards
+* adding login guard
+* adding expiry check
 
 ---
 
-## 11. Why This Architecture Matters
+## 13. Future Improvements
 
-This architecture ensures:
+* refresh token system
+* role-based UI
+* audit logging
+* caching
+* CI/CD pipeline
+* deployment
 
-* clean and organized code
-* easy debugging
-* scalable design
-* reusable structure
-* production-ready foundation
+---
+
+## 14. Final Reflection
+
+This project helped transition from simple coding to structured engineering.
+
+It improved:
+
+* system thinking
+* architecture understanding
+* real-world backend + frontend integration
+* security implementation
 
 ---
 

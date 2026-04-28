@@ -1,1 +1,31 @@
-<p>login works!</p>
+<div style="max-width: 400px; margin: 100px auto; text-align: center;">
+  <h2>Login</h2>
+
+  <form (ngSubmit)="onLogin()">
+
+    <input type="email"
+           placeholder="Email"
+           [(ngModel)]="loginData.email"
+           name="email"
+           required />
+
+    <br><br>
+
+    <input type="password"
+           placeholder="Password"
+           [(ngModel)]="loginData.password"
+           name="password"
+           required />
+
+    <br><br>
+
+    <button type="submit" [disabled]="loading">
+      {{ loading ? 'Logging in...' : 'Login' }}
+    </button>
+
+    <div *ngIf="errorMessage" style="color: red;">
+      {{ errorMessage }}
+    </div>
+
+  </form>
+</div>

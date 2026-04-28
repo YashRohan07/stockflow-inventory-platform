@@ -1,74 +1,57 @@
-// Used for HTTP status codes like 500, 400
 using System.Net;
-
-// Used to convert C# object to JSON
 using System.Text.Json;
-
-// Import custom exception class
 using StockFlow.Application.Common.Exceptions;
-
-// Import standard API response model
-using StockFlow.Application.Common.Models;
 
 namespace StockFlow.API.Middleware;
 
-// This middleware catches all unhandled errors in the application
+// This middleware catches all unhandled exceptions globally
 public class ExceptionMiddleware
 {
-    // This represents the next step in the request pipeline
     private readonly RequestDelegate _next;
 
-    // Constructor: receives the next middleware
     public ExceptionMiddleware(RequestDelegate next)
     {
         _next = next;
     }
 
-    // This method runs for every incoming request
     public async Task InvokeAsync(HttpContext context)
     {
         try
         {
-            // Pass request to the next middleware or controller
+            // Pass request to next middleware
             await _next(context);
         }
         catch (Exception ex)
         {
-            // If any error happens, handle it here
+            // If any exception occurs → handle it here
             await HandleExceptionAsync(context, ex);
         }
     }
 
-    // This method creates a standard error response
     private static Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
-        // Create a standard API response object
-        var response = new ApiResponse<object>
-        {
-            Success = false,              // request failed
-            Message = exception.Message,  // error message
-            Data = null                  // no data in error case
-        };
-
-        // Set response type to JSON
+        // Default response type
         context.Response.ContentType = "application/json";
 
-        // Check if it's a custom AppException
-        if (exception is AppException appEx)
+        // 🔹 Decide status code based on exception type
+        var statusCode = exception switch
         {
-            // Use custom status code (like 400, 404)
-            context.Response.StatusCode = appEx.StatusCode;
-        }
-        else
+            UnauthorizedException => StatusCodes.Status401Unauthorized, // Login Issues
+            ApplicationException => StatusCodes.Status400BadRequest,   // Business validation
+            _ => StatusCodes.Status500InternalServerError              // Unknown error
+        };
+
+        context.Response.StatusCode = statusCode;
+
+        // 🔹 Structured error response (clean API response)
+        var response = new
         {
-            // For unknown errors, return 500 Internal Server Error
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-        }
+            statusCode = statusCode,
+            message = exception.Message
+        };
 
-        // Convert response object to JSON string
-        var json = JsonSerializer.Serialize(response);
+        var jsonResponse = JsonSerializer.Serialize(response);
 
-        // Send JSON response back to client
-        return context.Response.WriteAsync(json);
+        return context.Response.WriteAsync(jsonResponse);
     }
 }

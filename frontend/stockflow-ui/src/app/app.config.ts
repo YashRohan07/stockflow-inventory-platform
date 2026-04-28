@@ -5,22 +5,28 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/
 // Import provideRouter to enable routing in the app
 import { provideRouter } from '@angular/router';
 
-// Import provideHttpClient to enable HTTP API calls
-import { provideHttpClient } from '@angular/common/http';
+// Import HttpClient + interceptor support
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
-// Import routes (defined in app.routes.ts)
+// Import routes
 import { routes } from './app.routes';
+
+// Import our custom Auth Interceptor
+import { authInterceptor } from './core/interceptors/auth-interceptor';
 
 // Main application configuration
 export const appConfig: ApplicationConfig = {
   providers: [
-    // Handle global errors across the application
+    // Global error handling
     provideBrowserGlobalErrorListeners(),
 
-    // Enable routing (navigation between pages)
+    // Enable routing
     provideRouter(routes),
 
-    // Enable HttpClient for calling backend APIs
-    provideHttpClient()
+    // Enable HttpClient + attach interceptor
+    // This ensures every API call automatically includes JWT token
+    provideHttpClient(
+      withInterceptors([authInterceptor])
+    )
   ]
 };

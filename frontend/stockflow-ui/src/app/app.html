@@ -1,16 +1,21 @@
 <!-- Main navigation bar -->
 <nav class="navbar">
-  <!-- Show these links only when user is logged in -->
-  <a *ngIf="authService.isLoggedIn()" routerLink="/dashboard">Dashboard</a>
-  <a *ngIf="authService.isLoggedIn()" routerLink="/products">Products</a>
-  <a *ngIf="authService.isLoggedIn()" routerLink="/reports">Reports</a>
 
-  <!-- Logout button -->
-  <button *ngIf="authService.isLoggedIn()"
-          type="button"
-          (click)="logout()">
-    Logout
-  </button>
+  <!-- LEFT SIDE: Navigation Links -->
+  <div class="nav-left" *ngIf="authService.isLoggedIn()">
+    <a routerLink="/products">Products</a>
+    <a routerLink="/reports">Reports</a>
+  </div>
+
+  <!-- RIGHT SIDE: Logout Button -->
+  <div class="nav-right" *ngIf="authService.isLoggedIn()">
+    <button type="button"
+            class="logout-btn"
+            (click)="logout()">
+      Logout
+    </button>
+  </div>
+
 </nav>
 
 <!-- Routed pages will load here -->

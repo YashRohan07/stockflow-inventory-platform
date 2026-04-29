@@ -1,33 +1,40 @@
-// Product model
-// This represents one product item in StockFlow
+// This model represents product data received from the backend API.
 export interface Product {
-  // Unique product ID from database
   id: number;
-
-  // Stock Keeping Unit - unique product code
   sku: string;
-
-  // Product name
   name: string;
-
-  // Product size, example: S, M, L, XL
-  size: string;
-
-  // Product color
-  color: string;
-
-  // Available stock quantity
+  size?: string | null;
+  color?: string | null;
   quantity: number;
-
-  // Product purchase price
   purchasePrice: number;
-
-  // Product purchase date
   purchaseDate: string;
+}
 
-  // Record created date
-  createdAt: string;
+// This model is used when creating a new product.
+export interface CreateProductRequest {
+  sku: string;
+  name: string;
+  size?: string | null;
+  color?: string | null;
+  quantity: number;
+  purchasePrice: number;
+  purchaseDate: string;
+}
 
-  // Record updated date, can be null
-  updatedAt: string | null;
+// This model is used when updating an existing product.
+// SKU is not included because SKU should not be changed after creation.
+export interface UpdateProductRequest {
+  name: string;
+  size?: string | null;
+  color?: string | null;
+  quantity: number;
+  purchasePrice: number;
+  purchaseDate: string;
+}
+
+// This model represents the common API response format from backend.
+export interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
 }

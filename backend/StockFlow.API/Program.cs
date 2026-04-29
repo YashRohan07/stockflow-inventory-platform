@@ -2,12 +2,11 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using StockFlow.API.Extensions;
 using StockFlow.API.Middleware;
 using StockFlow.Infrastructure.DependencyInjection;
 using StockFlow.Infrastructure.Persistence;
 using StockFlow.Application.Common.Options;
-using StockFlow.Application.Interfaces.Services;
-using StockFlow.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +21,12 @@ var secretKey = jwtSettings["SecretKey"];
 builder.Services.AddControllers();
 
 // Register Application services
-builder.Services.AddScoped<IAuthService, AuthService>();
+// Example: AuthService, ProductService
+builder.Services.AddApplicationServices();
+
+// Register Infrastructure services
+// Example: DbContext, repositories, password hasher, JWT generator, seeder
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
 // Swagger with JWT Bearer support
 builder.Services.AddEndpointsApiExplorer();
@@ -51,9 +55,6 @@ builder.Services.AddSwaggerGen(options =>
         };
     });
 });
-
-// Register Infrastructure services
-builder.Services.AddInfrastructureServices(builder.Configuration);
 
 // JWT Authentication
 builder.Services

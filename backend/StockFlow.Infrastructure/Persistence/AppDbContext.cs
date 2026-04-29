@@ -27,14 +27,14 @@ public class AppDbContext : DbContext
     public DbSet<User> Users => Set<User>();
 
     // This method is used to configure how entities map to database tables
-    // We use it to define rules like column types, precision, relationships, etc.
+    // Instead of writing all configurations here,
+    // we automatically load all configurations from the assembly
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Configure decimal precision for PurchasePrice
-        // This prevents data loss (truncation) in SQL Server
-        modelBuilder.Entity<Product>()
-            .Property(p => p.PurchasePrice)
-            .HasPrecision(18, 2); // total 18 digits, 2 after decimal
+        // This line automatically applies all IEntityTypeConfiguration classes
+        // Example: ProductConfiguration, UserConfiguration (if added)
+        // This keeps DbContext clean and scalable
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
         // Always call base method
         base.OnModelCreating(modelBuilder);

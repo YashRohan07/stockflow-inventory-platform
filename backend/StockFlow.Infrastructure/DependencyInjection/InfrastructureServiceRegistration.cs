@@ -7,15 +7,13 @@ using Microsoft.Extensions.Configuration;
 // Used for Dependency Injection (registering services)
 using Microsoft.Extensions.DependencyInjection;
 
-// Importing AppDbContext (our main database class)
-using StockFlow.Infrastructure.Persistence;
-
 // Importing interfaces from Application layer
 using StockFlow.Application.Interfaces.Services;
 using StockFlow.Application.Interfaces.Repositories;
 
 // Importing implementations from Infrastructure layer
 using StockFlow.Infrastructure.Authentication;
+using StockFlow.Infrastructure.Persistence;
 using StockFlow.Infrastructure.Repositories;
 
 namespace StockFlow.Infrastructure.DependencyInjection;
@@ -27,26 +25,31 @@ public static class InfrastructureServiceRegistration
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        // 🔹 Register AppDbContext (Database Context)
+        // Register AppDbContext (Database Context)
         // This configures EF Core to use SQL Server with connection string
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(
                 configuration.GetConnectionString("DefaultConnection")));
 
-        // 🔹 Register Password Hasher Service
+        // Register Password Hasher Service
         // Handles hashing and verifying passwords securely
         services.AddScoped<IPasswordHasher, PasswordHasherService>();
 
-        // 🔹 Register JWT Token Generator
+        // Register JWT Token Generator
         // Generates JWT tokens after successful login
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
-        // 🔹 Register User Repository
+        // Register User Repository
         // Application layer will use IUserRepository
         // Infrastructure provides the actual implementation
         services.AddScoped<IUserRepository, UserRepository>();
 
-        // 🔹 Register Database Seeder
+        // Register Product Repository
+        // Application layer will use IProductRepository
+        // Infrastructure provides the actual database implementation
+        services.AddScoped<IProductRepository, ProductRepository>();
+
+        // Register Database Seeder
         // Seeds default Admin and Member users on application startup
         services.AddScoped<DatabaseSeeder>();
 

@@ -1,31 +1,60 @@
-<div style="max-width: 400px; margin: 100px auto; text-align: center;">
-  <h2>Login</h2>
+<div class="login-container">
 
-  <form (ngSubmit)="onLogin()">
+  <div class="login-card">
 
-    <input type="email"
-           placeholder="Email"
-           [(ngModel)]="loginData.email"
-           name="email"
-           required />
+    <!-- Updated Header -->
+    <h2>Sign in to StockFlow</h2>
+    <p class="subtitle">Manage your products and inventory efficiently</p>
 
-    <br><br>
+    <form (ngSubmit)="onSubmit()" [formGroup]="loginForm">
 
-    <input type="password"
-           placeholder="Password"
-           [(ngModel)]="loginData.password"
-           name="password"
-           required />
+      <!-- Email -->
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email"
+               formControlName="email"
+               placeholder="Enter your email" />
 
-    <br><br>
+        <small *ngIf="f['email'].touched && f['email'].invalid" class="error">
+          Enter a valid email
+        </small>
+      </div>
 
-    <button type="submit" [disabled]="loading">
-      {{ loading ? 'Logging in...' : 'Login' }}
-    </button>
+      <!-- Password -->
+      <div class="form-group">
+        <label>Password</label>
 
-    <div *ngIf="errorMessage" style="color: red;">
-      {{ errorMessage }}
-    </div>
+        <div class="password-wrapper">
+          <input [type]="showPassword ? 'text' : 'password'"
+                 formControlName="password"
+                 placeholder="Enter your password" />
 
-  </form>
+          <!-- 👁️ Toggle -->
+          <span class="toggle-icon"
+                (click)="togglePassword()">
+            {{ showPassword ? '🙈' : '👁️' }}
+          </span>
+        </div>
+
+        <small *ngIf="f['password'].touched && f['password'].invalid" class="error">
+          Password is required
+        </small>
+      </div>
+
+      <!-- Global error -->
+      <div *ngIf="errorMessage" class="error">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Button -->
+      <button type="submit"
+              [disabled]="loginForm.invalid || isSubmitting">
+
+        {{ isSubmitting ? 'Logging in...' : 'Login' }}
+      </button>
+
+    </form>
+
+  </div>
+
 </div>

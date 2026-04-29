@@ -8,7 +8,7 @@
 
 StockFlow is a full-stack Inventory & Product Management Platform built using ASP.NET Core and Angular.
 
-It is designed as a learning-focused but industry-standard project that demonstrates backend architecture, frontend structure, authentication, and system design thinking.
+It is designed as a learning-focused but industry-standard project that demonstrates backend architecture, frontend structure, authentication and system design thinking.
 
 ---
 
@@ -45,11 +45,11 @@ It is designed as a learning-focused but industry-standard project that demonstr
 
 ### 2.2 Frontend
 
-* Angular (Standalone)
+* Angular 
 * TypeScript
 * Angular Router
 * HttpClient
-* Signals (state handling)
+* Reactive Forms
 
 ---
 
@@ -62,12 +62,15 @@ It is designed as a learning-focused but industry-standard project that demonstr
 ```text
 API Layer → Application Layer → Domain Layer
         ↘ Infrastructure Layer (Database, JWT, Hashing)
+
+Controller → Service → Repository → Database
 ```
 
-* API → handles HTTP requests
-* Application → business logic
+* Controller → handles HTTP requests
+* Service → contains business logic (validation, rules, mapping)
+* Repository → handles database operations
 * Domain → core entities
-* Infrastructure → database, authentication
+* Infrastructure → database and external services
 
 ---
 
@@ -86,7 +89,6 @@ src/app
 │   └── utils
 │
 └── features
-    ├── dashboard
     ├── products
     ├── auth
     └── reports
@@ -105,7 +107,7 @@ User
 ↓
 Angular Component
 ↓
-AuthService / ApiService
+ProductService / AuthService
 ↓
 HttpClient
 ↓
@@ -125,6 +127,53 @@ Response
 ↓
 Frontend UI Update
 ```
+
+---
+
+## 4.1 CRUD Flow (Product Module)
+
+```text
+User Action (Create / Update / Delete)
+↓
+Angular UI (Form / Button)
+↓
+ProductService (Frontend)
+↓
+HTTP Request
+↓
+ASP.NET Controller
+↓
+ProductService (Backend)
+↓
+ProductRepository
+↓
+Database (SQL Server)
+↓
+Response
+↓
+Frontend UI Update
+```
+
+This flow represents how full-stack CRUD operations work in the system.
+
+---
+
+## 4.2 System Behavior and Data Integrity
+
+The system ensures that:
+
+* SKU is unique across all products
+* Quantity and price cannot be negative
+* Invalid data is blocked at validation layer before reaching database
+* Database constraints provide an additional safety layer
+
+### Failure Handling
+
+* Invalid input → blocked by validation
+* Unauthorized access → blocked by JWT + guards
+* Server errors → handled by global exception middleware
+
+This ensures predictable and safe system behavior.
 
 ---
 
@@ -152,7 +201,25 @@ Access granted or denied
 
 ---
 
-## 6. Phase-by-Phase Summary
+## 6. DTO-Based API Design
+
+DTO (Data Transfer Object) is used to define how data moves between frontend and backend.
+
+```text
+Frontend → CreateProductDto → Backend
+Backend → ProductResponseDto → Frontend
+```
+
+Benefits:
+
+* prevents exposing internal entity structure
+* ensures clean API contract
+* separates input and output models
+* improves security and maintainability
+
+---
+
+## 7. Phase-by-Phase Summary
 
 ---
 
@@ -205,7 +272,21 @@ Access granted or denied
 
 ---
 
-## 7. Key Engineering Decisions
+### Phase 4 — Product and Inventory Management (CRUD)
+
+* product CRUD APIs implemented (Create, Read, Update, Delete)
+* DTO-based API design introduced
+* service and repository layers used
+* validation implemented for safe data handling
+* SKU used as unique business identifier
+* frontend product management UI built (list, create, edit, delete)
+* Angular reactive forms used for validation
+* full frontend-backend integration completed
+* products page used as main working screen after login
+
+---
+
+## 8. Key Engineering Decisions
 
 ---
 
@@ -231,6 +312,22 @@ Access granted or denied
 
 ---
 
+### Use DTO-Based API Design
+
+* clean separation between internal data and API contract
+* prevents direct exposure of entities
+* improves flexibility and maintainability
+
+---
+
+### Use Validation Layer
+
+* prevents invalid data before reaching database
+* improves user experience
+* ensures data integrity
+
+---
+
 ### Use Angular Feature-Based Structure
 
 * modular frontend
@@ -252,34 +349,28 @@ Access granted or denied
 
 ---
 
-## 8. Alternatives Considered
+## 8.1 Design Trade-offs
+
+### Not using full Clean Architecture
+
+* simpler layered approach used
+* easier to implement and understand
+* avoids over-engineering
 
 ---
 
-### Layered vs Clean Architecture
+### No caching implemented
 
-* Clean Architecture → more complex
-* Layered → simpler and practical
-
-**Chosen:** Layered Architecture
-
----
-
-### JWT vs Session-Based Auth
-
-* Session → stateful, less scalable
-* JWT → stateless, scalable
-
-**Chosen:** JWT
+* simpler system
+* easier debugging
+* acceptable for small-scale usage
 
 ---
 
-### SQL vs NoSQL
+### No concurrency handling (yet)
 
-* SQL → structured data, relationships
-* NoSQL → flexible but not needed
-
-**Chosen:** SQL Server
+* acceptable for low user count
+* will be improved later
 
 ---
 
@@ -292,6 +383,8 @@ Access granted or denied
 * logging
 * security (JWT)
 * consistent API design
+* debugging through structured logs
+* request tracing using logging middleware
 
 ---
 
@@ -323,6 +416,18 @@ Access granted or denied
 
 ---
 
+### Challenge: Product list not loading on first click
+
+**Solution:** fixed Angular change detection using ChangeDetectorRef
+
+---
+
+### Challenge: Redirect issue after create/update/delete
+
+**Solution:** improved routing and navigation flow
+
+---
+
 ## 11. What I Learned
 
 ---
@@ -342,6 +447,16 @@ Access granted or denied
 * routing
 * interceptors
 * guards
+* reactive forms
+
+---
+
+### Full Stack
+
+* how CRUD systems work end-to-end
+* how frontend and backend communicate
+* importance of DTO and validation
+* separation of business logic and data access
 
 ---
 
@@ -359,17 +474,23 @@ Access granted or denied
 * initially no route protection
 * login page accessible after login
 * token expiry not handled
+* dashboard unnecessarily separated
 
 **Improved by:**
 
 * adding guards
 * adding login guard
-* adding expiry check
+* redirecting to products page
+* simplifying navigation
 
 ---
 
 ## 13. Future Improvements
 
+* search (SKU, name)
+* filtering (date range, quantity)
+* sorting (price, stock)
+* pagination
 * refresh token system
 * role-based UI
 * audit logging
@@ -379,7 +500,26 @@ Access granted or denied
 
 ---
 
-## 14. Final Reflection
+## 14. System Readiness Level
+
+Current system is:
+
+* suitable for small-scale production use
+* supports multiple authenticated users
+* maintains data integrity
+* follows clean architecture principles
+
+Limitations:
+
+* no pagination yet
+* no caching
+* no advanced reporting
+
+These will be addressed in future phases.
+
+---
+
+## 15. Final Reflection
 
 This project helped transition from simple coding to structured engineering.
 
@@ -389,6 +529,5 @@ It improved:
 * architecture understanding
 * real-world backend + frontend integration
 * security implementation
-
----
+* full-stack development skills
 

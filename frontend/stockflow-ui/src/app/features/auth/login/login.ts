@@ -1,47 +1,65 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../../../core/services/auth.service';
-import { LoginRequest } from '../../../shared/models/auth';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './login.html'
+  imports: [
+    CommonModule,
+    ReactiveFormsModule
+  ],
+  templateUrl: './login.html',
+  styleUrls: ['./login.scss']
 })
 export class LoginComponent {
-  loginData: LoginRequest = {
-    email: '',
-    password: ''
-  };
 
+  loginForm: FormGroup;
   errorMessage = '';
-  loading = false;
+  isSubmitting = false;
+
+  // 👁️ Show/Hide password
+  showPassword = false;
 
   constructor(
+    private fb: FormBuilder,
     private authService: AuthService,
     private router: Router
-  ) { }
+  ) {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]]
+    });
+  }
 
-  onLogin(): void {
-    this.loading = true;
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  onSubmit(): void {
+    if (this.loginForm.invalid) return;
+
+    this.isSubmitting = true;
     this.errorMessage = '';
 
-    this.authService.login(this.loginData).subscribe({
+    const request = this.loginForm.value;
+
+    this.authService.login(request).subscribe({
       next: () => {
-        // Login success হলে dashboard page-এ redirect
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/products']);
       },
-      error: (err) => {
-        this.loading = false;
-        this.errorMessage = err.error?.message || 'Login failed';
-      },
-      complete: () => {
-        this.loading = false;
+      error: () => {
+        this.errorMessage = 'Invalid email or password';
+        this.isSubmitting = false;
       }
     });
+  }
+
+  // getter for template
+  get f() {
+    return this.loginForm.controls;
   }
 }

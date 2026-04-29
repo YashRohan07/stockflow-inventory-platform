@@ -8,9 +8,9 @@ export const loginGuard: CanActivateFn = () => {
   const router = inject(Router);
   const authService = inject(AuthService);
 
-  // If already logged in, redirect to dashboard
+  // If already logged in, redirect to products page
   if (authService.isLoggedIn()) {
-    router.navigate(['/dashboard']);
+    router.navigate(['/products']);
     return false;
   }
 

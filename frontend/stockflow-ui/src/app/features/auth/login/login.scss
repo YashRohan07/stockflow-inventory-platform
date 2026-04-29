@@ -1,0 +1,114 @@
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Container */
+.login-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 10vh;
+  background: #f1f5f9;
+}
+
+/* Card */
+.login-card {
+  width: 360px;
+  padding: 30px;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+  /* Title */
+  .login-card h2 {
+    margin-bottom: 5px;
+  }
+
+/* Subtitle */
+.subtitle {
+  font-size: 14px;
+  color: gray;
+  margin-bottom: 20px;
+}
+
+/* Form */
+.form-group {
+  text-align: left;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+  /* Label */
+  .form-group label {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* 🔥 INPUT FIXED (MAIN PART) */
+  .form-group input {
+    width: 100%;
+    padding: 10px;
+    padding-right: 40px; /* space for eye icon */
+
+    margin-top: 5px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    outline: none;
+    box-sizing: border-box; /* 🔥 IMPORTANT FIX */
+  }
+
+    /* Focus */
+    .form-group input:focus {
+      border-color: #2563eb;
+    }
+
+/* Password wrapper */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Eye icon */
+.toggle-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Button */
+button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+  button:hover {
+    background: #1d4ed8;
+  }
+
+  button:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+  }
+
+/* Error */
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}

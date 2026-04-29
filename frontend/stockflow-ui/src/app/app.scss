@@ -1,30 +1,35 @@
-/* Main app container */
-.app-container {
-  min-height: 100vh; /* full screen height */
-  font-family: Arial, sans-serif; /* simple readable font */
-}
-
-/* Top navigation bar */
 .navbar {
-  display: flex; /* place links side by side */
-  gap: 20px; /* space between links */
-  padding: 16px 24px; /* inner spacing */
-  background-color: #111827; /* dark background */
+  display: flex;
+  justify-content: space-between; // left + right split
+  align-items: center;
+  padding: 12px 20px;
+  background-color: #0f172a;
 }
 
-  /* Navigation links */
-  .navbar a {
-    color: white; /* white text */
-    text-decoration: none; /* remove underline */
-    font-weight: 500; /* slightly bold text */
+.nav-left a {
+  margin-right: 16px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+  .nav-left a:hover {
+    text-decoration: underline;
   }
 
-    /* Hover effect for navigation links */
-    .navbar a:hover {
-      text-decoration: underline; /* underline when mouse is over link */
-    }
-
-/* Main page content area */
-.page-content {
-  padding: 24px; /* space around page content */
+.nav-right {
+  display: flex;
+  align-items: center;
 }
+
+.logout-btn {
+  background-color: #e5e7eb;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+  .logout-btn:hover {
+    background-color: #d1d5db;
+  }

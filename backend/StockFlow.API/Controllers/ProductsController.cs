@@ -22,12 +22,14 @@ public class ProductsController : ControllerBase
     }
 
     // GET: /api/products
+    // Example:
+    // /api/products?search=shirt&purchaseDateFrom=2026-01-01&sortBy=price&sortOrder=asc&page=1&pageSize=10
     // Admin and Member can view product list.
     [HttpGet]
     [Authorize(Roles = "Admin,Member")]
-    public async Task<IActionResult> GetAllProducts()
+    public async Task<IActionResult> GetAllProducts([FromQuery] ProductQueryParametersDto query)
     {
-        var products = await _productService.GetAllAsync();
+        var products = await _productService.GetAllAsync(query);
 
         return Ok(new
         {

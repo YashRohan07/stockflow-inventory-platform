@@ -28,6 +28,7 @@ It is designed as a learning-focused but industry-standard project that demonstr
 * secure system using authentication
 * control access using roles (Admin / Member)
 * provide structured and scalable system design
+* supports dynamic product exploration using search, filter, sort, and pagination
 
 ---
 
@@ -45,7 +46,7 @@ It is designed as a learning-focused but industry-standard project that demonstr
 
 ### 2.2 Frontend
 
-* Angular 
+* Angular
 * TypeScript
 * Angular Router
 * HttpClient
@@ -206,8 +207,8 @@ Access granted or denied
 DTO (Data Transfer Object) is used to define how data moves between frontend and backend.
 
 ```text
-Frontend → CreateProductDto → Backend
-Backend → ProductResponseDto → Frontend
+Frontend → CreateProductDto → Backend  
+Backend → ProductResponseDto → Frontend  
 ```
 
 Benefits:
@@ -283,6 +284,20 @@ Benefits:
 * Angular reactive forms used for validation
 * full frontend-backend integration completed
 * products page used as main working screen after login
+
+---
+
+### Phase 5 — Search, Filter, Sort, and Pagination
+
+* dynamic product listing using query parameters
+* search functionality (SKU, Name)
+* filtering by purchase date
+* sorting by date, price, and quantity
+* pagination implemented for performance
+* paged API response design
+* frontend filter UI (search, date, sort controls)
+* API integration with query-based requests
+* improved usability for large datasets
 
 ---
 
@@ -385,6 +400,7 @@ Benefits:
 * consistent API design
 * debugging through structured logs
 * request tracing using logging middleware
+* pagination used to handle large datasets efficiently
 
 ---
 
@@ -466,6 +482,7 @@ Benefits:
 * stateless systems
 * role-based access
 * client-server interaction
+* scalable data handling using pagination
 
 ---
 
@@ -487,16 +504,12 @@ Benefits:
 
 ## 13. Future Improvements
 
-* search (SKU, name)
-* filtering (date range, quantity)
-* sorting (price, stock)
-* pagination
-* refresh token system
-* role-based UI
-* audit logging
-* caching
+* reporting (PDF generation)
+* advanced analytics
+* caching (Redis)
+* background jobs (Hangfire)
 * CI/CD pipeline
-* deployment
+* cloud deployment (Azure)
 
 ---
 
@@ -511,9 +524,9 @@ Current system is:
 
 Limitations:
 
-* no pagination yet
 * no caching
 * no advanced reporting
+* no background job processing
 
 These will be addressed in future phases.
 
@@ -530,4 +543,3 @@ It improved:
 * real-world backend + frontend integration
 * security implementation
 * full-stack development skills
-

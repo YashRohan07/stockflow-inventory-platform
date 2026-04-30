@@ -1,22 +1,43 @@
 <!-- Main navigation bar -->
-<nav class="navbar">
+<nav class="navbar" *ngIf="authService.isLoggedIn()">
 
-  <!-- LEFT SIDE: Navigation Links -->
-  <div class="nav-left" *ngIf="authService.isLoggedIn()">
-    <a routerLink="/products">Products</a>
-    <a routerLink="/reports">Reports</a>
+  <!-- LEFT SIDE -->
+  <div class="nav-left">
+
+    <!-- Brand -->
+    <div class="brand">
+      <span class="brand-logo">📦</span>
+      <span class="brand-name">StockFlow</span>
+    </div>
+
+    <!-- Navigation Links -->
+    <div class="nav-links">
+      <a routerLink="/products" routerLinkActive="active">Products</a>
+      <a routerLink="/reports" routerLinkActive="active">Reports</a>
+    </div>
+
   </div>
 
-  <!-- RIGHT SIDE: Logout Button -->
-  <div class="nav-right" *ngIf="authService.isLoggedIn()">
+  <!-- RIGHT SIDE -->
+  <div class="nav-right">
+
+    <!-- User Name ONLY -->
+    <div class="user-info">
+      <span class="user-name">
+        {{ authService.getUser()?.name }}
+      </span>
+    </div>
+
+    <!-- Logout Button -->
     <button type="button"
             class="logout-btn"
             (click)="logout()">
       Logout
     </button>
+
   </div>
 
 </nav>
 
-<!-- Routed pages will load here -->
+<!-- Routed pages -->
 <router-outlet></router-outlet>

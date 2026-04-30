@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using StockFlow.Application.Common;
+using StockFlow.Application.DTOs.Products;
 using StockFlow.Application.Interfaces.Repositories;
 using StockFlow.Domain.Entities;
 using StockFlow.Infrastructure.Persistence;
@@ -17,14 +19,82 @@ public class ProductRepository : IProductRepository
         _context = context;
     }
 
-    // Get all products.
-    // AsNoTracking improves performance for read-only queries.
-    public async Task<List<Product>> GetAllAsync()
+    // Get products with search, filter, sort, and pagination.
+    // Query logic stays in repository because it is database-related work.
+    public async Task<PagedResponse<Product>> GetAllAsync(ProductQueryParametersDto query)
     {
-        return await _context.Products
+        // Start with IQueryable so EF Core can build one optimized SQL query.
+        var productsQuery = _context.Products
             .AsNoTracking()
-            .OrderByDescending(p => p.Id)
+            .AsQueryable();
+
+        // Search by SKU or Name.
+        if (!string.IsNullOrWhiteSpace(query.Search))
+        {
+            var searchText = query.Search.Trim();
+
+            productsQuery = productsQuery.Where(p =>
+                p.SKU.Contains(searchText) ||
+                p.Name.Contains(searchText));
+        }
+
+        // Filter by purchase date from.
+        if (query.PurchaseDateFrom.HasValue)
+        {
+            productsQuery = productsQuery.Where(p =>
+                p.PurchaseDate >= query.PurchaseDateFrom.Value);
+        }
+
+        // Filter by purchase date to.
+        if (query.PurchaseDateTo.HasValue)
+        {
+            productsQuery = productsQuery.Where(p =>
+                p.PurchaseDate <= query.PurchaseDateTo.Value);
+        }
+
+        // Count before pagination.
+        var totalCount = await productsQuery.CountAsync();
+
+        // Normalize sorting values.
+        var sortBy = query.SortBy.Trim().ToLower();
+        var sortOrder = query.SortOrder.Trim().ToLower();
+        var isAscending = sortOrder == "asc";
+
+        // Apply sorting.
+        productsQuery = sortBy switch
+        {
+            "name" => isAscending
+                ? productsQuery.OrderBy(p => p.Name)
+                : productsQuery.OrderByDescending(p => p.Name),
+
+            "price" => isAscending
+                ? productsQuery.OrderBy(p => p.PurchasePrice)
+                : productsQuery.OrderByDescending(p => p.PurchasePrice),
+
+            "quantity" => isAscending
+                ? productsQuery.OrderBy(p => p.Quantity)
+                : productsQuery.OrderByDescending(p => p.Quantity),
+
+            "purchasedate" => isAscending
+                ? productsQuery.OrderBy(p => p.PurchaseDate)
+                : productsQuery.OrderByDescending(p => p.PurchaseDate),
+
+            _ => productsQuery.OrderByDescending(p => p.Id)
+        };
+
+        // Apply pagination.
+        var items = await productsQuery
+            .Skip((query.Page - 1) * query.PageSize)
+            .Take(query.PageSize)
             .ToListAsync();
+
+        return new PagedResponse<Product>
+        {
+            Items = items,
+            Page = query.Page,
+            PageSize = query.PageSize,
+            TotalCount = totalCount
+        };
     }
 
     // Get product by database Id.

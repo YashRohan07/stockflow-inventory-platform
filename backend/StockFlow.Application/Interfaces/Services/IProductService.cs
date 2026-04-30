@@ -1,3 +1,4 @@
+using StockFlow.Application.Common;
 using StockFlow.Application.DTOs.Products;
 
 namespace StockFlow.Application.Interfaces.Services;
@@ -6,8 +7,8 @@ namespace StockFlow.Application.Interfaces.Services;
 // Controllers will use this service interface.
 public interface IProductService
 {
-    // Get all products.
-    Task<List<ProductResponseDto>> GetAllAsync();
+    // Get products with search, filter, sort, and pagination.
+    Task<PagedResponse<ProductResponseDto>> GetAllAsync(ProductQueryParametersDto query);
 
     // Get one product by database Id.
     Task<ProductResponseDto> GetByIdAsync(int id);

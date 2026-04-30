@@ -1,3 +1,5 @@
+using StockFlow.Application.Common;
+using StockFlow.Application.DTOs.Products;
 using StockFlow.Domain.Entities;
 
 namespace StockFlow.Application.Interfaces.Repositories;
@@ -6,8 +8,8 @@ namespace StockFlow.Application.Interfaces.Repositories;
 // Application layer only knows the interface, not the database implementation.
 public interface IProductRepository
 {
-    // Get all products from database.
-    Task<List<Product>> GetAllAsync();
+    // Get products with search, filter, sort, and pagination.
+    Task<PagedResponse<Product>> GetAllAsync(ProductQueryParametersDto query);
 
     // Get a single product by database Id.
     Task<Product?> GetByIdAsync(int id);

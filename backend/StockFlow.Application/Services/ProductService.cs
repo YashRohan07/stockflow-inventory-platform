@@ -1,3 +1,4 @@
+using StockFlow.Application.Common;
 using StockFlow.Application.DTOs.Products;
 using StockFlow.Application.Interfaces.Repositories;
 using StockFlow.Application.Interfaces.Services;
@@ -18,14 +19,21 @@ public class ProductService : IProductService
         _productRepository = productRepository;
     }
 
-    // Get all products and convert them to response DTOs.
-    public async Task<List<ProductResponseDto>> GetAllAsync()
+    // Get products using query parameters and convert entities to response DTOs.
+    public async Task<PagedResponse<ProductResponseDto>> GetAllAsync(ProductQueryParametersDto query)
     {
-        var products = await _productRepository.GetAllAsync();
+        var pagedProducts = await _productRepository.GetAllAsync(query);
 
-        return products
-            .Select(MapToResponseDto)
-            .ToList();
+        return new PagedResponse<ProductResponseDto>
+        {
+            Items = pagedProducts.Items
+                .Select(MapToResponseDto)
+                .ToList(),
+
+            Page = pagedProducts.Page,
+            PageSize = pagedProducts.PageSize,
+            TotalCount = pagedProducts.TotalCount
+        };
     }
 
     // Get a single product by Id.

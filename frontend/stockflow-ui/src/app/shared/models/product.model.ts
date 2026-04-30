@@ -10,6 +10,28 @@ export interface Product {
   purchaseDate: string;
 }
 
+// Query parameters for product list search/filter/sort/pagination.
+export interface ProductQueryParameters {
+  search?: string;
+  purchaseDateFrom?: string;
+  purchaseDateTo?: string;
+  sortBy?: string;
+  sortOrder?: string;
+  page: number;
+  pageSize: number;
+}
+
+// Generic paged response from backend.
+export interface PagedResponse<T> {
+  items: T[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
 // This model is used when creating a new product.
 export interface CreateProductRequest {
   sku: string;

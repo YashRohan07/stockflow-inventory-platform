@@ -8,12 +8,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 // Importing interfaces from Application layer
-using StockFlow.Application.Interfaces.Services;
 using StockFlow.Application.Interfaces.Repositories;
+using StockFlow.Application.Interfaces.Services;
 
 // Importing implementations from Infrastructure layer
 using StockFlow.Infrastructure.Authentication;
 using StockFlow.Infrastructure.Persistence;
+using StockFlow.Infrastructure.Reporting;
 using StockFlow.Infrastructure.Repositories;
 
 namespace StockFlow.Infrastructure.DependencyInjection;
@@ -48,6 +49,11 @@ public static class InfrastructureServiceRegistration
         // Application layer will use IProductRepository
         // Infrastructure provides the actual database implementation
         services.AddScoped<IProductRepository, ProductRepository>();
+
+        // Register PDF report generator
+        // Application depends on IPdfReportGenerator
+        // Infrastructure provides the actual QuestPDF implementation
+        services.AddScoped<IPdfReportGenerator, PdfReportGenerator>();
 
         // Register Database Seeder
         // Seeds default Admin and Member users on application startup

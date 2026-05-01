@@ -26,6 +26,14 @@ export class Api {
     return this.http.get<T>(`${this.baseUrl}/${endpoint}`);
   }
 
+  // Generic GET request for file/blob download
+  // Used for PDF report download
+  getBlob(endpoint: string): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/${endpoint}`, {
+      responseType: 'blob'
+    });
+  }
+
   // Generic POST request method
   post<T>(endpoint: string, body: unknown): Observable<T> {
     return this.http.post<T>(`${this.baseUrl}/${endpoint}`, body);

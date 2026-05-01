@@ -14,6 +14,9 @@ public static class ServiceCollectionExtensions
         // Register ProductService.
         services.AddScoped<IProductService, ProductService>();
 
+        // Register ReportService.
+        services.AddScoped<IReportService, ReportService>();
+
         return services;
     }
 }

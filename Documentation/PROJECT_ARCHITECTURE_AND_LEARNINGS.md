@@ -1,4 +1,4 @@
-# Project Architecture and Learnings
+# PROJECT ARCHITECTURE AND LEARNINGS
 
 ---
 
@@ -8,13 +8,13 @@
 
 StockFlow is a full-stack Inventory & Product Management Platform built using ASP.NET Core and Angular.
 
-It is designed as a learning-focused but industry-standard project that demonstrates backend architecture, frontend structure, authentication and system design thinking.
+It is designed as a learning-focused but industry-standard project that demonstrates backend architecture, frontend structure, authentication, reporting, and system design thinking.
 
 ---
 
 ### 1.2 Why This Project Was Built
 
-* to learn backend and frontend together
+* to learn full-stack development (backend + frontend)
 * to understand real-world system architecture
 * to practice clean code and SOLID principles
 * to build a production-style full-stack application
@@ -27,8 +27,9 @@ It is designed as a learning-focused but industry-standard project that demonstr
 * manage inventory and stock
 * secure system using authentication
 * control access using roles (Admin / Member)
-* provide structured and scalable system design
-* supports dynamic product exploration using search, filter, sort, and pagination
+* provide a structured and scalable system architecture
+* support dynamic product exploration using search, filter, sort, and pagination
+* generate reports and insights from inventory data
 
 ---
 
@@ -68,7 +69,7 @@ Controller → Service → Repository → Database
 ```
 
 * Controller → handles HTTP requests
-* Service → contains business logic (validation, rules, mapping)
+* Service → contains business logic (validation, rules, mapping, reporting)
 * Repository → handles database operations
 * Domain → core entities
 * Infrastructure → database and external services
@@ -79,7 +80,7 @@ Controller → Service → Repository → Database
 
 ```text
 src/app
-│
+
 ├── core
 │   ├── services
 │   ├── guards
@@ -108,7 +109,7 @@ User
 ↓
 Angular Component
 ↓
-ProductService / AuthService
+Service (Frontend)
 ↓
 HttpClient
 ↓
@@ -136,7 +137,7 @@ Frontend UI Update
 ```text
 User Action (Create / Update / Delete)
 ↓
-Angular UI (Form / Button)
+Angular UI
 ↓
 ProductService (Frontend)
 ↓
@@ -148,24 +149,22 @@ ProductService (Backend)
 ↓
 ProductRepository
 ↓
-Database (SQL Server)
+Database
 ↓
 Response
 ↓
 Frontend UI Update
 ```
 
-This flow represents how full-stack CRUD operations work in the system.
-
 ---
 
 ## 4.2 System Behavior and Data Integrity
 
-The system ensures that:
+The system ensures:
 
 * SKU is unique across all products
 * Quantity and price cannot be negative
-* Invalid data is blocked at validation layer before reaching database
+* Invalid data is blocked at validation layer
 * Database constraints provide an additional safety layer
 
 ### Failure Handling
@@ -173,8 +172,6 @@ The system ensures that:
 * Invalid input → blocked by validation
 * Unauthorized access → blocked by JWT + guards
 * Server errors → handled by global exception middleware
-
-This ensures predictable and safe system behavior.
 
 ---
 
@@ -204,8 +201,6 @@ Access granted or denied
 
 ## 6. DTO-Based API Design
 
-DTO (Data Transfer Object) is used to define how data moves between frontend and backend.
-
 ```text
 Frontend → CreateProductDto → Backend  
 Backend → ProductResponseDto → Frontend  
@@ -217,6 +212,38 @@ Benefits:
 * ensures clean API contract
 * separates input and output models
 * improves security and maintainability
+
+---
+
+## 6.1 Reporting Flow
+
+```text
+User selects report type
+↓
+Angular Reports Component
+↓
+ReportService (Frontend)
+↓
+HTTP Request
+↓
+ReportsController
+↓
+ReportService (Backend)
+↓
+ProductRepository
+↓
+Database
+↓
+Data Aggregation (Summary + Filtering)
+↓
+PDF Generator (optional)
+↓
+Response / File Download
+↓
+Frontend UI Update
+```
+
+This shows how reporting works from UI to backend and back.
 
 ---
 
@@ -275,35 +302,46 @@ Benefits:
 
 ### Phase 4 — Product and Inventory Management (CRUD)
 
-* product CRUD APIs implemented (Create, Read, Update, Delete)
-* DTO-based API design introduced
-* service and repository layers used
-* validation implemented for safe data handling
-* SKU used as unique business identifier
-* frontend product management UI built (list, create, edit, delete)
-* Angular reactive forms used for validation
-* full frontend-backend integration completed
-* products page used as main working screen after login
+* product CRUD APIs implemented
+* DTO-based API design
+* validation implemented
+* SKU as unique identifier
+* frontend product UI (list, create, edit, delete)
+* Angular reactive forms
+* full integration completed
 
 ---
 
 ### Phase 5 — Search, Filter, Sort, and Pagination
 
-* dynamic product listing using query parameters
-* search functionality (SKU, Name)
-* filtering by purchase date
-* sorting by date, price, and quantity
-* pagination implemented for performance
-* paged API response design
-* frontend filter UI (search, date, sort controls)
-* API integration with query-based requests
-* improved usability for large datasets
+* dynamic listing using query parameters
+* search (SKU, Name)
+* date filtering
+* sorting
+* pagination
+* paged API response
+* frontend filter UI
+* improved usability
+
+---
+
+### Phase 6 — Reporting and Advanced Features
+
+* inventory reporting system implemented
+* summary calculation (total products, quantity, average price, total value)
+* low stock report with dynamic threshold
+* PDF report generation from backend
+* reports controller and service layer added
+* DTO-based reporting response design
+* frontend reports page implemented
+* summary dashboard cards added
+* low stock filtering UI
+* PDF download integration (full report + low stock report)
+* improved UX with loading states and messages
 
 ---
 
 ## 8. Key Engineering Decisions
-
----
 
 ### Use Layered Architecture
 
@@ -329,23 +367,23 @@ Benefits:
 
 ### Use DTO-Based API Design
 
-* clean separation between internal data and API contract
-* prevents direct exposure of entities
-* improves flexibility and maintainability
+* clean separation between internal data and API
+* prevents direct exposure
+* improves maintainability
 
 ---
 
 ### Use Validation Layer
 
-* prevents invalid data before reaching database
-* improves user experience
+* prevents invalid data
+* improves UX
 * ensures data integrity
 
 ---
 
 ### Use Angular Feature-Based Structure
 
-* modular frontend
+* modular
 * scalable
 
 ---
@@ -359,7 +397,7 @@ Benefits:
 
 ### Use Guards
 
-* frontend route protection
+* route protection
 * better UX
 
 ---
@@ -368,8 +406,8 @@ Benefits:
 
 ### Not using full Clean Architecture
 
-* simpler layered approach used
-* easier to implement and understand
+* simpler layered approach
+* easier to understand
 * avoids over-engineering
 
 ---
@@ -377,15 +415,14 @@ Benefits:
 ### No caching implemented
 
 * simpler system
-* easier debugging
-* acceptable for small-scale usage
+* acceptable for current scale
 
 ---
 
 ### No concurrency handling (yet)
 
-* acceptable for low user count
-* will be improved later
+* acceptable for low usage
+* will improve later
 
 ---
 
@@ -398,17 +435,14 @@ Benefits:
 * logging
 * security (JWT)
 * consistent API design
-* debugging through structured logs
-* request tracing using logging middleware
-* pagination used to handle large datasets efficiently
+* request tracing
+* pagination for performance
 
 ---
 
 ## 10. Key Challenges and Solutions
 
----
-
-### Challenge: Swagger token not working
+### Challenge: Swagger token issue
 
 **Solution:** fixed Bearer configuration
 
@@ -416,13 +450,13 @@ Benefits:
 
 ### Challenge: 401 vs 403 confusion
 
-**Solution:** tested with Admin and Member roles
+**Solution:** tested roles properly
 
 ---
 
 ### Challenge: frontend-backend integration
 
-**Solution:** used AuthService + models
+**Solution:** used services and models
 
 ---
 
@@ -432,21 +466,19 @@ Benefits:
 
 ---
 
-### Challenge: Product list not loading on first click
+### Challenge: Angular UI update issues
 
-**Solution:** fixed Angular change detection using ChangeDetectorRef
+**Solution:** used ChangeDetectorRef
 
 ---
 
-### Challenge: Redirect issue after create/update/delete
+### Challenge: Reporting summary mismatch
 
-**Solution:** improved routing and navigation flow
+**Solution:** fixed dynamic threshold logic
 
 ---
 
 ## 11. What I Learned
-
----
 
 ### Backend
 
@@ -454,6 +486,7 @@ Benefits:
 * middleware pipeline
 * EF Core
 * dependency injection
+* reporting logic
 
 ---
 
@@ -464,15 +497,16 @@ Benefits:
 * interceptors
 * guards
 * reactive forms
+* report UI design
 
 ---
 
 ### Full Stack
 
-* how CRUD systems work end-to-end
-* how frontend and backend communicate
-* importance of DTO and validation
-* separation of business logic and data access
+* end-to-end system flow
+* API communication
+* DTO importance
+* separation of layers
 
 ---
 
@@ -481,8 +515,8 @@ Benefits:
 * request flow
 * stateless systems
 * role-based access
-* client-server interaction
-* scalable data handling using pagination
+* reporting systems
+* data aggregation
 
 ---
 
@@ -491,22 +525,23 @@ Benefits:
 * initially no route protection
 * login page accessible after login
 * token expiry not handled
-* dashboard unnecessarily separated
+* reporting summary mismatch
 
 **Improved by:**
 
 * adding guards
-* adding login guard
-* redirecting to products page
-* simplifying navigation
+* fixing login flow
+* handling token expiry
+* fixing reporting logic
 
 ---
 
 ## 13. Future Improvements
 
-* reporting (PDF generation)
-* advanced analytics
-* caching (Redis)
+* advanced analytics (charts, trends)
+* report caching (Redis)
+* scheduled report generation
+* export formats (CSV/Excel)
 * background jobs (Hangfire)
 * CI/CD pipeline
 * cloud deployment (Azure)
@@ -517,29 +552,27 @@ Benefits:
 
 Current system is:
 
-* suitable for small-scale production use
-* supports multiple authenticated users
+* suitable for small-scale production
+* supports authenticated users
 * maintains data integrity
-* follows clean architecture principles
+* includes basic reporting
 
 Limitations:
 
+* no advanced analytics
 * no caching
-* no advanced reporting
-* no background job processing
-
-These will be addressed in future phases.
+* no background processing
 
 ---
 
 ## 15. Final Reflection
 
-This project helped transition from simple coding to structured engineering.
+This project helped transition from coding to real engineering.
 
 It improved:
 
 * system thinking
 * architecture understanding
-* real-world backend + frontend integration
+* full-stack integration
 * security implementation
-* full-stack development skills
+* reporting and business logic understanding

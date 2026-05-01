@@ -7,28 +7,21 @@ using StockFlow.Infrastructure.Persistence;
 
 namespace StockFlow.Infrastructure.Repositories;
 
-// This class contains actual database operations for Product.
-// It uses AppDbContext to communicate with SQL Server.
 public class ProductRepository : IProductRepository
 {
     private readonly AppDbContext _context;
 
-    // AppDbContext is injected using Dependency Injection.
     public ProductRepository(AppDbContext context)
     {
         _context = context;
     }
 
-    // Get products with search, filter, sort, and pagination.
-    // Query logic stays in repository because it is database-related work.
     public async Task<PagedResponse<Product>> GetAllAsync(ProductQueryParametersDto query)
     {
-        // Start with IQueryable so EF Core can build one optimized SQL query.
         var productsQuery = _context.Products
             .AsNoTracking()
             .AsQueryable();
 
-        // Search by SKU or Name.
         if (!string.IsNullOrWhiteSpace(query.Search))
         {
             var searchText = query.Search.Trim();
@@ -38,29 +31,24 @@ public class ProductRepository : IProductRepository
                 p.Name.Contains(searchText));
         }
 
-        // Filter by purchase date from.
         if (query.PurchaseDateFrom.HasValue)
         {
             productsQuery = productsQuery.Where(p =>
                 p.PurchaseDate >= query.PurchaseDateFrom.Value);
         }
 
-        // Filter by purchase date to.
         if (query.PurchaseDateTo.HasValue)
         {
             productsQuery = productsQuery.Where(p =>
                 p.PurchaseDate <= query.PurchaseDateTo.Value);
         }
 
-        // Count before pagination.
         var totalCount = await productsQuery.CountAsync();
 
-        // Normalize sorting values.
         var sortBy = query.SortBy.Trim().ToLower();
         var sortOrder = query.SortOrder.Trim().ToLower();
         var isAscending = sortOrder == "asc";
 
-        // Apply sorting.
         productsQuery = sortBy switch
         {
             "name" => isAscending
@@ -82,7 +70,6 @@ public class ProductRepository : IProductRepository
             _ => productsQuery.OrderByDescending(p => p.Id)
         };
 
-        // Apply pagination.
         var items = await productsQuery
             .Skip((query.Page - 1) * query.PageSize)
             .Take(query.PageSize)
@@ -97,15 +84,12 @@ public class ProductRepository : IProductRepository
         };
     }
 
-    // Get product by database Id.
     public async Task<Product?> GetByIdAsync(int id)
     {
         return await _context.Products
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
-    // Get product by SKU.
-    // SKU comparison is done after trimming input.
     public async Task<Product?> GetBySkuAsync(string sku)
     {
         var normalizedSku = sku.Trim();
@@ -114,7 +98,6 @@ public class ProductRepository : IProductRepository
             .FirstOrDefaultAsync(p => p.SKU == normalizedSku);
     }
 
-    // Check if SKU already exists.
     public async Task<bool> SkuExistsAsync(string sku)
     {
         var normalizedSku = sku.Trim();
@@ -123,24 +106,89 @@ public class ProductRepository : IProductRepository
             .AnyAsync(p => p.SKU == normalizedSku);
     }
 
-    // Add new product.
     public async Task AddAsync(Product product)
     {
         await _context.Products.AddAsync(product);
         await _context.SaveChangesAsync();
     }
 
-    // Update existing product.
     public async Task UpdateAsync(Product product)
     {
         _context.Products.Update(product);
         await _context.SaveChangesAsync();
     }
 
-    // Delete existing product.
     public async Task DeleteAsync(Product product)
     {
         _context.Products.Remove(product);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<Product>> GetAllForReportAsync()
+    {
+        return await _context.Products
+            .AsNoTracking()
+            .OrderByDescending(p => p.PurchaseDate)
+            .ToListAsync();
+    }
+
+    public async Task<List<Product>> GetLowStockAsync(int threshold)
+    {
+        return await _context.Products
+            .AsNoTracking()
+            .Where(p => p.Quantity < threshold)
+            .OrderBy(p => p.Quantity)
+            .ToListAsync();
+    }
+
+    public async Task<List<Product>> GetByPurchaseDateRangeAsync(DateTime from, DateTime to)
+    {
+        return await _context.Products
+            .AsNoTracking()
+            .Where(p => p.PurchaseDate >= from && p.PurchaseDate <= to)
+            .OrderByDescending(p => p.PurchaseDate)
+            .ToListAsync();
+    }
+
+    public async Task<int> GetTotalProductsCountAsync()
+    {
+        return await _context.Products
+            .AsNoTracking()
+            .CountAsync();
+    }
+
+    public async Task<int> GetTotalQuantityAsync()
+    {
+        return await _context.Products
+            .AsNoTracking()
+            .SumAsync(p => p.Quantity);
+    }
+
+    public async Task<decimal> GetAveragePriceAsync()
+    {
+        var hasProducts = await _context.Products.AnyAsync();
+
+        if (!hasProducts)
+        {
+            return 0;
+        }
+
+        return await _context.Products
+            .AsNoTracking()
+            .AverageAsync(p => p.PurchasePrice);
+    }
+
+    public async Task<decimal> GetTotalInventoryValueAsync()
+    {
+        return await _context.Products
+            .AsNoTracking()
+            .SumAsync(p => p.Quantity * p.PurchasePrice);
+    }
+
+    public async Task<int> GetLowStockCountAsync(int threshold)
+    {
+        return await _context.Products
+            .AsNoTracking()
+            .CountAsync(p => p.Quantity < threshold);
     }
 }

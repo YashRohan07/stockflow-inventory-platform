@@ -1,6 +1,6 @@
 # StockFlow - Inventory & Product Management Platform
 
-![.NET](https://img.shields.io/badge/.NET-8-blue)
+![.NET](https://img.shields.io/badge/.NET-10-blue)
 ![Angular](https://img.shields.io/badge/Angular-17-red)
 ![License](https://img.shields.io/badge/license-MIT-green)
 

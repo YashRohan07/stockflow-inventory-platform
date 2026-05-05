@@ -28,9 +28,9 @@ It is designed as a **production-style, scalable system** demonstrating **clean 
 
 
 #### PDF Report
-<img width="634" height="896" alt="5" src="https://github.com/user-attachments/assets/61de9690-f4da-4eaf-9f0a-634e3160490e" />
----
 <img width="634" height="896" alt="5" src="https://github.com/user-attachments/assets/d91bd1e1-6ce7-4afa-bec3-de3a63030dd9" />
+---
+<img width="655" height="909" alt="7" src="https://github.com/user-attachments/assets/11f5eec3-7cbe-4e6a-ae61-665db32de093" />
 
 ---
 

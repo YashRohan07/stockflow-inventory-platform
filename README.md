@@ -23,14 +23,13 @@ It is designed as a **production-style, scalable system** demonstrating **clean 
 
 
 #### Reports Dashboard
-<img width="1880" height="1058" alt="3 5" src="https://github.com/user-attachments/assets/efc43a5d-4e30-489d-a5c1-1dd2880bc338" />
 
 <img width="1899" height="1041" alt="4" src="https://github.com/user-attachments/assets/7493c880-ec18-4cde-9a4d-43b368b864c6" />
 
 
 #### PDF Report
 <img width="634" height="896" alt="5" src="https://github.com/user-attachments/assets/61de9690-f4da-4eaf-9f0a-634e3160490e" />
-
+---
 <img width="634" height="896" alt="5" src="https://github.com/user-attachments/assets/d91bd1e1-6ce7-4afa-bec3-de3a63030dd9" />
 
 ---

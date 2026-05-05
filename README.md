@@ -13,16 +13,25 @@ It is designed as a **production-style, scalable system** demonstrating **clean 
 ### Screenshots
 
 #### Login
-![Login](./Documentation/screenshots/login.png)
+<img width="1892" height="901" alt="1" src="https://github.com/user-attachments/assets/ce2675a0-bc96-4ef1-89aa-2c9529293d1f" />
+
 
 #### Product Inventory
-![Products](./Documentation/screenshots/products.png)
+<img width="1902" height="1042" alt="2" src="https://github.com/user-attachments/assets/3395e474-921f-47d1-b7e8-eb079a8477ba" />
+
+<img width="1898" height="1046" alt="3" src="https://github.com/user-attachments/assets/64d30cde-0064-4d78-acec-73ac4a5a0eb7" />
+
 
 #### Reports Dashboard
-![Reports](./Documentation/screenshots/reports.png)
+<img width="1880" height="1058" alt="3 5" src="https://github.com/user-attachments/assets/efc43a5d-4e30-489d-a5c1-1dd2880bc338" />
+
+<img width="1899" height="1041" alt="4" src="https://github.com/user-attachments/assets/7493c880-ec18-4cde-9a4d-43b368b864c6" />
+
 
 #### PDF Report
-![PDF](./Documentation/screenshots/pdf.png)
+<img width="634" height="896" alt="5" src="https://github.com/user-attachments/assets/61de9690-f4da-4eaf-9f0a-634e3160490e" />
+
+<img width="634" height="896" alt="5" src="https://github.com/user-attachments/assets/d91bd1e1-6ce7-4afa-bec3-de3a63030dd9" />
 
 ---
 
@@ -112,7 +121,14 @@ User → Angular UI → API Service → ASP.NET API
 - Angular Router  
 - HttpClient  
 - Reactive Forms  
-- Interceptors (Auth + Error Handling)  
+- Interceptors (Auth + Error Handling)
+
+## Tech Versions
+- .NET: 10.0
+- EF Core: 10.0.7
+- Angular: 17
+- Node.js: 18+ 
+- NPM: 9+
 
 ---
 

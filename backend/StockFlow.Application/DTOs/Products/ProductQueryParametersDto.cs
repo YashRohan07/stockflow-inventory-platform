@@ -1,31 +1,32 @@
 namespace StockFlow.Application.DTOs.Products;
 
-// This DTO receives query parameters from the frontend/API client.
-// Example:
-// /api/products?search=shirt&purchaseDateFrom=2026-01-01&sortBy=price&sortOrder=asc&page=1&pageSize=10
+// Represents query parameters for retrieving product lists.
+// Supports searching, filtering, sorting, and pagination.
+// Acts as a contract between API and data access layer.
 public class ProductQueryParametersDto
 {
-    // Search text for SKU or product name.
+    // Search term applied to SKU or product name.
     public string? Search { get; set; }
 
-    // Optional purchase date start filter.
+    // Filter: include products purchased on or after this date
     public DateTime? PurchaseDateFrom { get; set; }
 
-    // Optional purchase date end filter.
+    // Filter: include products purchased on or before this date
     public DateTime? PurchaseDateTo { get; set; }
 
-    // Sorting field.
-    // Allowed values will be handled in repository:
-    // purchaseDate, price, quantity, name
+    // Field used for sorting results.
+    // Expected values: purchaseDate, price, quantity, name
+    // Note: Validation/whitelisting should be enforced in repository/service layer.
     public string SortBy { get; set; } = "purchaseDate";
 
-    // Sorting direction.
-    // Allowed values: asc, desc
+    // Sorting direction: asc (ascending) or desc (descending)
+    // Note: Invalid values should be normalized in service/repository layer.
     public string SortOrder { get; set; } = "desc";
 
     private int _page = 1;
 
-    // Page number should never be less than 1.
+    // Page number (1-based indexing).
+    // Automatically corrected to minimum value of 1.
     public int Page
     {
         get => _page;
@@ -34,8 +35,9 @@ public class ProductQueryParametersDto
 
     private int _pageSize = 10;
 
-    // Page size is limited to avoid heavy database queries.
-    // Simple production-style protection.
+    // Number of items per page.
+    // Constrained to prevent excessive data load (basic performance protection).
+    // Range: 1 to 50
     public int PageSize
     {
         get => _pageSize;

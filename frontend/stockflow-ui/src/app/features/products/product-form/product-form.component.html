@@ -1,107 +1,70 @@
-<div class="form-page">
-  <div class="form-card">
-    <div class="form-header">
-      <h2>{{ isEditMode ? 'Edit Product' : 'Add Product' }}</h2>
-      <p>{{ isEditMode ? 'Update product information.' : 'Create a new inventory product.' }}</p>
+<div class="product-form-page">
+  <div class="page-header">
+    <div>
+      <h2>{{ isEditMode ? 'Edit Product' : 'Create Product' }}</h2>
+      <p>{{ isEditMode ? 'Update product and inventory details.' : 'Add a new product to inventory.' }}</p>
     </div>
 
-    <div *ngIf="errorMessage" class="alert error">
-      {{ errorMessage }}
-    </div>
+    <a routerLink="/products" class="btn-outline">
+      Back to Products
+    </a>
+  </div>
 
-    <form [formGroup]="productForm" (ngSubmit)="submitForm()">
-      <div class="form-group">
+  <div *ngIf="errorMessage" class="alert error">
+    {{ errorMessage }}
+  </div>
+
+  <form [formGroup]="productForm" (ngSubmit)="submitForm()" class="form-card">
+    <div class="form-grid">
+      <div class="form-field">
         <label>SKU</label>
-        <input type="text" formControlName="sku" placeholder="Example: SHIRT-BLK-M" />
-
-        <small *ngIf="f['sku'].touched && f['sku'].errors?.['required']">
-          SKU is required.
-        </small>
-
-        <small *ngIf="f['sku'].touched && f['sku'].errors?.['maxlength']">
-          SKU cannot be more than 50 characters.
-        </small>
+        <input type="text" formControlName="sku" placeholder="Example: SHIRT-001" />
+        <small *ngIf="f['sku'].touched && f['sku'].invalid">SKU is required.</small>
       </div>
 
-      <div class="form-group">
+      <div class="form-field">
         <label>Name</label>
-        <input type="text" formControlName="name" placeholder="Example: Black Shirt" />
-
-        <small *ngIf="f['name'].touched && f['name'].errors?.['required']">
-          Name is required.
-        </small>
-
-        <small *ngIf="f['name'].touched && f['name'].errors?.['maxlength']">
-          Name cannot be more than 150 characters.
-        </small>
+        <input type="text" formControlName="name" placeholder="Example: White Shirt" />
+        <small *ngIf="f['name'].touched && f['name'].invalid">Name is required.</small>
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>Size</label>
-          <input type="text" formControlName="size" placeholder="Example: M" />
-
-          <small *ngIf="f['size'].touched && f['size'].errors?.['maxlength']">
-            Size cannot be more than 50 characters.
-          </small>
-        </div>
-
-        <div class="form-group">
-          <label>Color</label>
-          <input type="text" formControlName="color" placeholder="Example: Black" />
-
-          <small *ngIf="f['color'].touched && f['color'].errors?.['maxlength']">
-            Color cannot be more than 50 characters.
-          </small>
-        </div>
+      <div class="form-field">
+        <label>Size</label>
+        <input type="text" formControlName="size" placeholder="Example: XL / 42 / 36" />
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>Quantity</label>
-          <input type="number" formControlName="quantity" />
-
-          <small *ngIf="f['quantity'].touched && f['quantity'].errors?.['required']">
-            Quantity is required.
-          </small>
-
-          <small *ngIf="f['quantity'].touched && f['quantity'].errors?.['min']">
-            Quantity cannot be negative.
-          </small>
-        </div>
-
-        <div class="form-group">
-          <label>Purchase Price</label>
-          <input type="number" formControlName="purchasePrice" />
-
-          <small *ngIf="f['purchasePrice'].touched && f['purchasePrice'].errors?.['required']">
-            Purchase price is required.
-          </small>
-
-          <small *ngIf="f['purchasePrice'].touched && f['purchasePrice'].errors?.['min']">
-            Purchase price cannot be negative.
-          </small>
-        </div>
+      <div class="form-field">
+        <label>Color</label>
+        <input type="text" formControlName="color" placeholder="Example: White" />
       </div>
 
-      <div class="form-group">
+      <div class="form-field">
+        <label>Quantity</label>
+        <input type="number" formControlName="quantity" min="0" />
+        <small *ngIf="f['quantity'].touched && f['quantity'].invalid">Quantity is required.</small>
+      </div>
+
+      <div class="form-field">
+        <label>Purchase Price</label>
+        <input type="number" formControlName="purchasePrice" min="0" />
+        <small *ngIf="f['purchasePrice'].touched && f['purchasePrice'].invalid">Purchase price is required.</small>
+      </div>
+
+      <div class="form-field full">
         <label>Purchase Date</label>
         <input type="date" formControlName="purchaseDate" />
-
-        <small *ngIf="f['purchaseDate'].touched && f['purchaseDate'].errors?.['required']">
-          Purchase date is required.
-        </small>
+        <small *ngIf="f['purchaseDate'].touched && f['purchaseDate'].invalid">Purchase date is required.</small>
       </div>
+    </div>
 
-      <div class="form-actions">
-        <button type="button" routerLink="/products" class="btn-secondary">
-          Cancel
-        </button>
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update Product' : 'Create Product') }}
+      </button>
 
-        <button type="submit" class="btn-primary" [disabled]="isSubmitting">
-          {{ isSubmitting ? 'Saving...' : isEditMode ? 'Update Product' : 'Create Product' }}
-        </button>
-      </div>
-    </form>
-  </div>
+      <button type="button" class="btn-outline" routerLink="/products" [disabled]="isSubmitting">
+        Cancel
+      </button>
+    </div>
+  </form>
 </div>

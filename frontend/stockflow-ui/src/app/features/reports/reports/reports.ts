@@ -10,6 +10,8 @@ import {
   InventorySummary
 } from '../../../shared/models/report.model';
 
+type ActiveDownloadType = 'full' | 'low-stock' | null;
+
 @Component({
   selector: 'app-reports',
   standalone: true,
@@ -19,7 +21,6 @@ import {
 })
 export class Reports implements OnInit {
   summary: InventorySummary | null = null;
-
   reportItems: InventoryReportItem[] = [];
 
   lowStockThreshold = 20;
@@ -27,6 +28,7 @@ export class Reports implements OnInit {
   isLoadingSummary = false;
   isLoadingReport = false;
   isDownloading = false;
+  activeDownloadType: ActiveDownloadType = null;
 
   errorMessage = '';
   successMessage = '';
@@ -41,9 +43,17 @@ export class Reports implements OnInit {
     this.loadFullInventoryReport();
   }
 
+  private resetMessages(): void {
+    this.errorMessage = '';
+    this.successMessage = '';
+  }
+
+  private isInvalidThreshold(): boolean {
+    return !this.lowStockThreshold || this.lowStockThreshold <= 0;
+  }
+
   loadSummary(): void {
     this.isLoadingSummary = true;
-    this.errorMessage = '';
 
     this.reportService.getSummary(this.lowStockThreshold)
       .pipe(
@@ -54,21 +64,18 @@ export class Reports implements OnInit {
       )
       .subscribe({
         next: (response) => {
-          this.summary = response.data;
-          this.cdr.detectChanges();
+          this.summary = response.data ?? null;
         },
         error: (error) => {
           console.error('Summary load failed:', error);
           this.errorMessage = 'Failed to load inventory summary.';
-          this.cdr.detectChanges();
         }
       });
   }
 
   loadFullInventoryReport(): void {
     this.isLoadingReport = true;
-    this.errorMessage = '';
-    this.successMessage = '';
+    this.resetMessages();
 
     this.reportService.getFullInventoryReport()
       .pipe(
@@ -80,28 +87,26 @@ export class Reports implements OnInit {
       .subscribe({
         next: (response) => {
           this.reportItems = response.data ?? [];
-          this.successMessage = 'Full inventory report loaded.';
+          this.successMessage = 'Full inventory report loaded successfully.';
           this.loadSummary();
-          this.cdr.detectChanges();
         },
         error: (error) => {
           console.error('Report load failed:', error);
           this.errorMessage = 'Failed to load inventory report.';
           this.reportItems = [];
-          this.cdr.detectChanges();
         }
       });
   }
 
   loadLowStockReport(): void {
-    if (this.lowStockThreshold <= 0) {
+    if (this.isInvalidThreshold()) {
       this.errorMessage = 'Low stock threshold must be greater than zero.';
+      this.successMessage = '';
       return;
     }
 
     this.isLoadingReport = true;
-    this.errorMessage = '';
-    this.successMessage = '';
+    this.resetMessages();
 
     this.reportService.getLowStockReport(this.lowStockThreshold)
       .pipe(
@@ -113,73 +118,70 @@ export class Reports implements OnInit {
       .subscribe({
         next: (response) => {
           this.reportItems = response.data ?? [];
-          this.successMessage = 'Low stock report loaded.';
+          this.successMessage = 'Low stock report loaded successfully.';
           this.loadSummary();
-          this.cdr.detectChanges();
         },
         error: (error) => {
           console.error('Low stock report load failed:', error);
           this.errorMessage = 'Failed to load low stock report.';
           this.reportItems = [];
-          this.cdr.detectChanges();
         }
       });
   }
 
   downloadFullInventoryPdf(): void {
     this.isDownloading = true;
-    this.errorMessage = '';
-    this.successMessage = '';
+    this.activeDownloadType = 'full';
+    this.resetMessages();
 
     this.reportService.downloadFullInventoryPdf()
       .pipe(
         finalize(() => {
           this.isDownloading = false;
+          this.activeDownloadType = null;
           this.cdr.detectChanges();
         })
       )
       .subscribe({
         next: (blob) => {
           this.downloadBlob(blob, 'full-inventory-report.pdf');
-          this.successMessage = 'Full inventory PDF downloaded.';
-          this.cdr.detectChanges();
+          this.successMessage = 'Full inventory PDF downloaded successfully.';
         },
         error: (error) => {
           console.error('PDF download failed:', error);
-          this.errorMessage = 'Failed to download PDF.';
-          this.cdr.detectChanges();
+          this.errorMessage = 'Failed to download full inventory PDF.';
         }
       });
   }
 
   downloadLowStockPdf(): void {
-    if (this.lowStockThreshold <= 0) {
+    if (this.isInvalidThreshold()) {
       this.errorMessage = 'Low stock threshold must be greater than zero.';
+      this.successMessage = '';
       return;
     }
 
     this.isDownloading = true;
-    this.errorMessage = '';
-    this.successMessage = '';
+    this.activeDownloadType = 'low-stock';
+    this.resetMessages();
 
     this.reportService.downloadLowStockPdf(this.lowStockThreshold)
       .pipe(
         finalize(() => {
           this.isDownloading = false;
+          this.activeDownloadType = null;
           this.cdr.detectChanges();
         })
       )
       .subscribe({
         next: (blob) => {
           this.downloadBlob(blob, 'low-stock-report.pdf');
-          this.successMessage = 'Low stock PDF downloaded.';
+          this.successMessage = 'Low stock PDF downloaded successfully.';
           this.loadSummary();
-          this.cdr.detectChanges();
         },
         error: (error) => {
           console.error('Low stock PDF download failed:', error);
           this.errorMessage = 'Failed to download low stock PDF.';
-          this.cdr.detectChanges();
         }
       });
   }
@@ -190,7 +192,11 @@ export class Reports implements OnInit {
 
     anchor.href = url;
     anchor.download = fileName;
+    anchor.style.display = 'none';
+
+    document.body.appendChild(anchor);
     anchor.click();
+    document.body.removeChild(anchor);
 
     window.URL.revokeObjectURL(url);
   }

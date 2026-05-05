@@ -1,12 +1,13 @@
 // Health response data model
-// This represents the data returned from /api/health
+// Represents the "data" object returned from /api/health endpoint
 export interface HealthStatus {
-  // Backend status, example: "Healthy"
-  status: string;
+  // API health status (controlled values)
+  status: 'Healthy' | 'Unhealthy' | 'Degraded';
 
-  // Application name, example: "StockFlow API"
+  // Application/service name
   application: string;
 
-  // Response timestamp from backend
+  // ISO timestamp string returned from backend
+  // Convert to Date in UI if needed
   timestamp: string;
 }

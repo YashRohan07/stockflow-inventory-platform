@@ -1,76 +1,64 @@
-// Required for async database operations like AnyAsync()
 using Microsoft.EntityFrameworkCore;
-
-// Importing password hashing interface from Application layer
 using StockFlow.Application.Interfaces.Services;
-
-// Importing User entity and UserRole enum from Domain layer
 using StockFlow.Domain.Entities;
 using StockFlow.Domain.Enums;
 
-// Namespace for persistence-related logic in Infrastructure layer
 namespace StockFlow.Infrastructure.Persistence;
 
-// This class is responsible for seeding initial/default data into the database
+// Seeds initial/default data into the database.
+// Primarily used for development and testing environments.
 public class DatabaseSeeder
 {
-    // Database context to interact with database tables
     private readonly AppDbContext _context;
-
-    // Password hasher to securely hash user passwords before saving
     private readonly IPasswordHasher _passwordHasher;
 
-    // Constructor for dependency injection
     public DatabaseSeeder(AppDbContext context, IPasswordHasher passwordHasher)
     {
         _context = context;
         _passwordHasher = passwordHasher;
     }
 
-    // This method runs when the application starts
-    // It inserts default users if the Users table is empty
+    // Seeds default users if the Users table is empty.
+    // Safe to run multiple times (idempotent behavior).
     public async Task SeedAsync()
     {
-        // Check if any user already exists in the database
-        // If yes, do nothing (avoid duplicate seeding)
+        // Prevent duplicate seeding
         if (await _context.Users.AnyAsync())
         {
             return;
         }
 
-        // Create default Admin user
+        // Default Admin user (for initial system access)
         var adminUser = new User
         {
             Name = "System Admin",
             Email = "admin@stockflow.com",
 
-            // Hashing password before storing
+            // Password is hashed before storage (never store plain-text passwords)
+            // NOTE: Hardcoded credentials are for development only and should not be used in production.
             PasswordHash = _passwordHasher.HashPassword("Admin@786"),
 
             Role = UserRole.Admin,
-
-            // Set current UTC time as creation time
             CreatedAt = DateTime.UtcNow
         };
 
-        // Create default Member user
+        // Default Member user (for testing role-based access)
         var memberUser = new User
         {
             Name = "Member",
             Email = "member@stockflow.com",
 
-            // Hashing password before storing
+            // NOTE: Development-only credentials
             PasswordHash = _passwordHasher.HashPassword("Member@787"),
 
             Role = UserRole.Member,
-
             CreatedAt = DateTime.UtcNow
         };
 
-        // Add both users to database
+        // Add users in a single batch operation
         await _context.Users.AddRangeAsync(adminUser, memberUser);
 
-        // Save changes to database
+        // Persist changes to the database
         await _context.SaveChangesAsync();
     }
 }

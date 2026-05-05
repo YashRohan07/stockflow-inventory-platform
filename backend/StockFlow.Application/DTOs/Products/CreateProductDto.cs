@@ -1,32 +1,32 @@
 namespace StockFlow.Application.DTOs.Products;
 
-// This DTO is used when creating a new product.
-// The client sends this data to the API.
+// Represents input data required to create a new product record.
+// Validation rules (e.g., required fields, non-negative values, uniqueness)
+// should be enforced via FluentValidation and service layer.
 public class CreateProductDto
 {
-    // SKU is provided by the user.
-    // It must be unique in the database.
+    // Stock Keeping Unit (SKU) - unique identifier for a product.
+    // Must be unique across the system (enforced at DB + service level).
     public string SKU { get; set; } = string.Empty;
 
-    // Product name is required.
+    // Product name (required for identification and search).
     public string Name { get; set; } = string.Empty;
 
-    // Size is optional.
-    // Example: S, M, L, XL, 32, 34
+    // Optional size attribute (e.g., S, M, L, XL, numeric sizes).
     public string? Size { get; set; }
 
-    // Color is optional.
-    // Example: Black, White, Blue
+    // Optional color attribute (used for filtering and display).
     public string? Color { get; set; }
 
-    // Quantity means available stock.
-    // It cannot be negative.
+    // Available stock quantity.
+    // Must be >= 0 (validated before persistence).
     public int Quantity { get; set; }
 
-    // Purchase price means buying price.
-    // It cannot be negative.
+    // Purchase price per unit.
+    // Must be >= 0 and represents cost price (not selling price).
     public decimal PurchasePrice { get; set; }
 
-    // Purchase date means when the product was purchased.
+    // Date when the product was purchased or stocked.
+    // Should typically be in UTC for consistency.
     public DateTime PurchaseDate { get; set; }
 }

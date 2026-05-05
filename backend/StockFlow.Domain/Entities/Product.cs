@@ -1,36 +1,32 @@
 namespace StockFlow.Domain.Entities
 {
-    // Product entity represents a product/inventory item in the system.
-    // This class maps to the Products table in the database.
+    // Represents a product within the inventory system.
+    // This is a core domain entity and maps to the Products table.
     public class Product : BaseEntity
     {
-        // SKU means Stock Keeping Unit.
-        // This is a user-provided unique business identifier.
-        // Example: SKU-001, SHIRT-BLK-M, PANT-RED-32
+        // Stock Keeping Unit (SKU) - unique business identifier.
+        // Immutable after creation and must remain unique across the system.
         public string SKU { get; set; } = string.Empty;
 
-        // Product name.
-        // Example: T-Shirt, Jeans, Shirt
+        // Product name used for identification and search.
         public string Name { get; set; } = string.Empty;
 
-        // Product size.
-        // Example: S, M, L, XL, 32, 34
+        // Optional size attribute (domain-specific classification).
         public string? Size { get; set; }
 
-        // Product color.
-        // Example: Black, White, Blue
+        // Optional color attribute.
         public string? Color { get; set; }
 
         // Available stock quantity.
-        // Quantity should not be negative.
+        // Domain constraint: must be >= 0.
         public int Quantity { get; set; }
 
-        // Product purchase price.
-        // This is the buying price of the product.
+        // Purchase (cost) price per unit.
+        // Domain constraint: must be >= 0.
         public decimal PurchasePrice { get; set; }
 
-        // Product purchase date.
-        // This helps us track when the product was purchased.
+        // Date when the product was added/purchased in inventory.
+        // Should be handled as UTC for consistency across systems.
         public DateTime PurchaseDate { get; set; }
     }
 }

@@ -6,6 +6,8 @@ using StockFlow.Application.Interfaces.Services;
 
 namespace StockFlow.Infrastructure.Reporting;
 
+// Generates PDF reports using QuestPDF.
+// Responsible for transforming report data into a formatted document.
 public class PdfReportGenerator : IPdfReportGenerator
 {
     public byte[] GenerateInventoryReportPdf(
@@ -13,7 +15,7 @@ public class PdfReportGenerator : IPdfReportGenerator
         List<InventoryReportItemDto> items,
         InventorySummaryDto summary)
     {
-        QuestPDF.Settings.License = LicenseType.Community;
+        // Note: License configuration should ideally be done once at application startup.
 
         return Document.Create(container =>
         {
@@ -23,6 +25,7 @@ public class PdfReportGenerator : IPdfReportGenerator
                 page.Size(PageSizes.A4);
                 page.DefaultTextStyle(x => x.FontSize(10));
 
+                // Header section with report metadata
                 page.Header()
                     .PaddingBottom(16)
                     .Column(column =>
@@ -35,6 +38,7 @@ public class PdfReportGenerator : IPdfReportGenerator
                             .FontSize(16)
                             .SemiBold();
 
+                        // Using local time for readability; consider UTC for consistency
                         column.Item().Text($"Generated at: {DateTime.Now:yyyy-MM-dd HH:mm}")
                             .FontSize(9)
                             .FontColor(Colors.Grey.Darken1);
@@ -45,6 +49,7 @@ public class PdfReportGenerator : IPdfReportGenerator
                     {
                         column.Spacing(14);
 
+                        // Summary section (high-level KPIs)
                         column.Item().Text("Summary")
                             .FontSize(13)
                             .Bold();
@@ -76,6 +81,7 @@ public class PdfReportGenerator : IPdfReportGenerator
                             table.Cell().Element(BodyCell).Text(summary.LowStockProducts.ToString());
                         });
 
+                        // Detailed report section
                         column.Item().Text("Report Items")
                             .FontSize(13)
                             .Bold();
@@ -127,6 +133,7 @@ public class PdfReportGenerator : IPdfReportGenerator
                         }
                     });
 
+                // Footer with pagination
                 page.Footer()
                     .AlignCenter()
                     .Text(text =>
@@ -141,11 +148,13 @@ public class PdfReportGenerator : IPdfReportGenerator
         }).GeneratePdf();
     }
 
+    // Formats monetary values consistently (2 decimal places)
     private static string FormatMoney(decimal value)
     {
         return $"{value:0.00}";
     }
 
+    // Header cell styling for tables
     private static IContainer HeaderCell(IContainer container)
     {
         return container
@@ -155,6 +164,7 @@ public class PdfReportGenerator : IPdfReportGenerator
             .Padding(5);
     }
 
+    // Body cell styling for tables
     private static IContainer BodyCell(IContainer container)
     {
         return container

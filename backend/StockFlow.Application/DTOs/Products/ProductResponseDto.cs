@@ -1,30 +1,33 @@
 namespace StockFlow.Application.DTOs.Products;
 
-// This DTO is used when sending product data back to the client.
-// We do not return the Product entity directly.
+// Represents product data returned to the client.
+// This DTO is intentionally separated from the domain entity to:
+// - prevent exposing internal fields (e.g., audit fields, internal IDs)
+// - maintain a stable API contract independent of database changes
 public class ProductResponseDto
 {
-    // Database-generated primary key.
+    // Database-generated unique identifier
     public int Id { get; set; }
 
-    // Unique business identifier.
+    // Business identifier used for product tracking (SKU)
     public string SKU { get; set; } = string.Empty;
 
-    // Product name.
+    // Product name (used for display and search)
     public string Name { get; set; } = string.Empty;
 
-    // Optional product size.
+    // Optional size attribute (e.g., S, M, L, numeric sizes)
     public string? Size { get; set; }
 
-    // Optional product color.
+    // Optional color attribute (used for filtering/display)
     public string? Color { get; set; }
 
-    // Current available quantity.
+    // Current available stock quantity
     public int Quantity { get; set; }
 
-    // Buying price of the product.
+    // Purchase (cost) price per unit
     public decimal PurchasePrice { get; set; }
 
-    // Date when the product was purchased.
+    // Date when the product was purchased/added to inventory
+    // Should be treated as UTC for consistency across systems
     public DateTime PurchaseDate { get; set; }
 }

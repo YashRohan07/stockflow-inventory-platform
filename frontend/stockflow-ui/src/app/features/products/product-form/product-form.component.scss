@@ -1,109 +1,172 @@
-.form-page {
-  padding: 24px;
+.product-form-page {
+  min-height: calc(100vh - 80px);
+  padding: 32px 36px;
+  background: #f4f6f8;
+  color: #0f172a;
+}
+
+.page-header {
   display: flex;
-  justify-content: center;
-}
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
 
-.form-card {
-  width: 100%;
-  max-width: 720px;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 24px;
-}
-
-.form-header {
-  margin-bottom: 24px;
-}
-
-  .form-header h2 {
+  h2 {
     margin: 0;
-    font-size: 24px;
+    font-size: 34px;
+    font-weight: 900;
+    letter-spacing: -0.04em;
   }
 
-  .form-header p {
-    margin: 6px 0 0;
-    color: #666;
+  p {
+    margin: 8px 0 0;
+    color: #475569;
+    font-size: 15px;
+    font-weight: 500;
   }
+}
 
 .alert {
-  padding: 12px;
-  border-radius: 6px;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 800;
 }
 
-.error {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.form-group {
-  margin-bottom: 16px;
-  display: flex;
-  flex-direction: column;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-label {
-  margin-bottom: 6px;
-  font-weight: 500;
-}
-
-input {
-  padding: 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-}
-
-  input:disabled {
-    background: #f3f4f6;
-    cursor: not-allowed;
+  .alert.error {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
   }
 
-small {
-  color: #dc2626;
-  margin-top: 5px;
+.form-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 22px;
+  padding: 30px;
+  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.06);
 }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-size: 13px;
+    font-weight: 900;
+    color: #0f172a;
+  }
+
+  input {
+    height: 48px;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 0 14px;
+    font-size: 15px;
+    outline: none;
+    color: #0f172a;
+    background: #ffffff;
+  }
+
+    input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    input:disabled {
+      background: #f8fafc;
+      color: #64748b;
+      cursor: not-allowed;
+    }
+
+  small {
+    color: #dc2626;
+    font-size: 12px;
+    font-weight: 700;
+  }
+}
+
+  .form-field.full {
+    grid-column: 1 / -1;
+  }
 
 .form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 24px;
+  margin-top: 28px;
 }
 
 .btn-primary,
-.btn-secondary {
-  padding: 10px 16px;
-  border-radius: 6px;
-  border: none;
+.btn-outline {
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 13px;
+  font-weight: 800;
   cursor: pointer;
   text-decoration: none;
+  transition: all 0.2s ease;
 }
 
 .btn-primary {
+  border: none;
   background: #2563eb;
-  color: white;
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.25);
 }
 
-  .btn-primary:disabled {
-    background: #93c5fd;
-    cursor: not-allowed;
+  .btn-primary:hover:not(:disabled) {
+    background: #1d4ed8;
+    transform: translateY(-1px);
   }
 
-.btn-secondary {
-  background: #e5e7eb;
-  color: #111827;
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  color: #334155;
+  border: 1px solid #cbd5e1;
 }
 
-@media (max-width: 640px) {
-  .form-row {
+  .btn-outline:hover:not(:disabled) {
+    background: #f8fafc;
+  }
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .product-form-page {
+    padding: 24px 18px;
+  }
+
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .form-grid {
     grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn-primary,
+  .btn-outline {
+    width: 100%;
   }
 }

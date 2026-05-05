@@ -1,15 +1,21 @@
 <section class="dashboard">
-  <h2>Dashboard</h2>
+  <div class="dashboard-card">
+    <h2>Dashboard</h2>
 
-  <p>Backend Status:</p>
+    <p>Backend Status</p>
 
-  <strong>{{ healthMessage() }}</strong>
+    <strong class="status"
+            [class.success]="backendStatus() === 'Healthy'"
+            [class.error]="!backendStatus()">
+      {{ healthMessage() }}
+    </strong>
 
-  @if (backendStatus()) {
-  <p>Status: {{ backendStatus() }}</p>
-  }
+    @if (backendStatus()) {
+    <p>Status: {{ backendStatus() }}</p>
+    }
 
-  @if (applicationName()) {
-  <p>Application: {{ applicationName() }}</p>
-  }
+    @if (applicationName()) {
+    <p>Application: {{ applicationName() }}</p>
+    }
+  </div>
 </section>

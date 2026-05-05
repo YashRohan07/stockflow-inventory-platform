@@ -11,6 +11,7 @@ import {
 } from '../../../shared/models/product.model';
 
 import { ProductService } from '../product.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-product-list',
@@ -49,12 +50,17 @@ export class ProductListComponent implements OnInit {
   isDeleting = false;
 
   constructor(
-    private productService: ProductService,
-    private cdr: ChangeDetectorRef
+    private readonly productService: ProductService,
+    public readonly authService: AuthService,
+    private readonly cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
     this.loadProducts();
+  }
+
+  get isAdmin(): boolean {
+    return this.authService.getUserRole() === 'Admin';
   }
 
   private buildQuery(): ProductQueryParameters {
@@ -71,6 +77,7 @@ export class ProductListComponent implements OnInit {
 
   loadProducts(): void {
     this.isLoading = true;
+    this.errorMessage = '';
 
     this.productService.getAllProducts(this.buildQuery())
       .pipe(
@@ -90,14 +97,11 @@ export class ProductListComponent implements OnInit {
           this.totalPages = pagedData?.totalPages ?? 0;
           this.hasPreviousPage = pagedData?.hasPreviousPage ?? false;
           this.hasNextPage = pagedData?.hasNextPage ?? false;
-
-          this.cdr.detectChanges();
         },
         error: (error) => {
           console.error('Product load failed:', error);
           this.errorMessage = 'Failed to load products.';
           this.products = [];
-          this.cdr.detectChanges();
         }
       });
   }
@@ -124,7 +128,7 @@ export class ProductListComponent implements OnInit {
   }
 
   goToPreviousPage(): void {
-    if (!this.hasPreviousPage) {
+    if (!this.hasPreviousPage || this.isLoading) {
       return;
     }
 
@@ -133,7 +137,7 @@ export class ProductListComponent implements OnInit {
   }
 
   goToNextPage(): void {
-    if (!this.hasNextPage) {
+    if (!this.hasNextPage || this.isLoading) {
       return;
     }
 
@@ -159,6 +163,12 @@ export class ProductListComponent implements OnInit {
   }
 
   openDeleteModal(product: Product): void {
+    if (!this.isAdmin) {
+      this.errorMessage = 'You do not have permission to delete products.';
+      this.successMessage = '';
+      return;
+    }
+
     this.selectedProductId = product.id;
     this.selectedProductName = product.name;
     this.showDeleteModal = true;
@@ -185,6 +195,12 @@ export class ProductListComponent implements OnInit {
       return;
     }
 
+    if (!this.isAdmin) {
+      this.errorMessage = 'You do not have permission to delete products.';
+      this.resetDeleteModal();
+      return;
+    }
+
     const productIdToDelete = this.selectedProductId;
 
     this.isDeleting = true;
@@ -200,23 +216,22 @@ export class ProductListComponent implements OnInit {
       )
       .subscribe({
         next: () => {
-          // Close modal immediately after successful delete.
           this.resetDeleteModal();
-
           this.successMessage = 'Product deleted successfully.';
-
-          // Reload product list after delete.
           this.loadProducts();
-
-          this.cdr.detectChanges();
         },
         error: (error) => {
           console.error('Delete failed:', error);
 
-          this.errorMessage = 'Failed to delete product. Please try again.';
-
-          // Keep modal open only if delete actually fails.
-          this.cdr.detectChanges();
+          if (error.status === 403) {
+            this.errorMessage = 'You do not have permission to delete products.';
+          } else if (error.status === 401) {
+            this.errorMessage = 'Session expired. Please login again.';
+          } else if (error.status === 404) {
+            this.errorMessage = 'Product not found. It may have already been deleted.';
+          } else {
+            this.errorMessage = 'Failed to delete product. Please try again.';
+          }
         }
       });
   }

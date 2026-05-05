@@ -78,7 +78,7 @@ export class ProductService {
     return this.http.put<ApiResponse<Product>>(`${this.apiUrl}/${id}`, request);
   }
 
-  // Delete product (UPDATED)
+  // Delete product
   deleteProduct(id: number): Observable<ApiResponse<unknown>> {
     return this.http.delete<ApiResponse<unknown>>(`${this.apiUrl}/${id}`);
   }

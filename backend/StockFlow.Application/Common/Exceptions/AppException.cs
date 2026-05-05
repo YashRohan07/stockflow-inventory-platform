@@ -1,17 +1,19 @@
 namespace StockFlow.Application.Common.Exceptions;
 
-// Custom exception class for handling application errors
-// We use this to throw controlled errors with a status code (like 400, 404)
+// Base exception type for controlled application errors.
+// Used to throw predictable, business-level exceptions from the Application layer
+// which are later translated into HTTP responses by ExceptionMiddleware.
 public class AppException : Exception
 {
-    // This stores the HTTP status code (e.g., 400, 404, 500)
+    // HTTP status code associated with this exception (e.g., 400, 404, 409).
+    // Allows the middleware to map application errors to proper API responses.
     public int StatusCode { get; }
 
-    // Constructor: takes error message and optional status code
+    // Initializes a new instance of AppException with a message and optional status code.
+    // Default status code is 400 (Bad Request) for validation or business rule failures.
     public AppException(string message, int statusCode = 400)
-        : base(message) // pass message to base Exception class
+        : base(message) // Pass message to base Exception class
     {
-        // Set the status code
         StatusCode = statusCode;
     }
 }

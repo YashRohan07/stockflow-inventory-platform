@@ -1,14 +1,9 @@
 <div class="login-container">
-
   <div class="login-card">
-
-    <!-- Updated Header -->
     <h2>Sign in to StockFlow</h2>
     <p class="subtitle">Manage your products and inventory efficiently</p>
 
     <form (ngSubmit)="onSubmit()" [formGroup]="loginForm">
-
-      <!-- Email -->
       <div class="form-group">
         <label>Email</label>
         <input type="email"
@@ -16,11 +11,10 @@
                placeholder="Enter your email" />
 
         <small *ngIf="f['email'].touched && f['email'].invalid" class="error">
-          Enter a valid email
+          Enter a valid email.
         </small>
       </div>
 
-      <!-- Password -->
       <div class="form-group">
         <label>Password</label>
 
@@ -29,32 +23,25 @@
                  formControlName="password"
                  placeholder="Enter your password" />
 
-          <!-- 👁️ Toggle -->
-          <span class="toggle-icon"
-                (click)="togglePassword()">
+          <span class="toggle-icon" (click)="togglePassword()">
             {{ showPassword ? '🙈' : '👁️' }}
           </span>
         </div>
 
         <small *ngIf="f['password'].touched && f['password'].invalid" class="error">
-          Password is required
+          Password is required.
         </small>
       </div>
 
-      <!-- Global error -->
-      <div *ngIf="errorMessage" class="error">
+      <div *ngIf="errorMessage" class="login-error">
         {{ errorMessage }}
       </div>
 
-      <!-- Button -->
       <button type="submit"
+              class="btn-login"
               [disabled]="loginForm.invalid || isSubmitting">
-
         {{ isSubmitting ? 'Logging in...' : 'Login' }}
       </button>
-
     </form>
-
   </div>
-
 </div>

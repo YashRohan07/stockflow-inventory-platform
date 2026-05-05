@@ -1,11 +1,12 @@
+using StockFlow.Application.Common.Exceptions;
 using StockFlow.Application.DTOs.Auth;
 using StockFlow.Application.Interfaces.Repositories;
 using StockFlow.Application.Interfaces.Services;
-using StockFlow.Application.Common.Exceptions;
 
 namespace StockFlow.Application.Services;
 
-// This service handles authentication (login) business logic
+// Handles authentication business logic.
+// Coordinates user lookup, password verification, JWT generation, and safe response creation.
 public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepository;
@@ -24,19 +25,20 @@ public class AuthService : IAuthService
 
     public async Task<LoginResponseDto> LoginAsync(LoginRequestDto request)
     {
-        // Normalize email (avoid case issues)
+        // Normalize email to avoid case-sensitivity issues during login.
         var email = request.Email.Trim().ToLower();
 
-        // 🔹 Step 1: Find user by email
         var user = await _userRepository.GetByEmailAsync(email);
 
-        // 🔹 Step 2: If user not found → throw custom exception
+        // Return the same error message for missing user and invalid password
+        // to avoid revealing whether an email exists in the system.
         if (user is null)
         {
             throw new UnauthorizedException("Invalid email or password");
         }
 
-        // 🔹 Step 3: Verify password (plain vs hashed)
+        // Verify plain-text input against the stored password hash.
+        // Password hashing details are hidden behind IPasswordHasher.
         var isPasswordValid = _passwordHasher.VerifyPassword(
             request.Password,
             user.PasswordHash);
@@ -46,10 +48,10 @@ public class AuthService : IAuthService
             throw new UnauthorizedException("Invalid email or password");
         }
 
-        // 🔹 Step 4: Generate JWT token
+        // Generate a signed JWT after credentials are successfully verified.
         var token = _jwtTokenGenerator.GenerateToken(user);
 
-        // 🔹 Step 5: Return response DTO (safe data only)
+        // Return only safe user information required by the frontend.
         return new LoginResponseDto
         {
             Token = token,

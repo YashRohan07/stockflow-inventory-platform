@@ -1,25 +1,42 @@
 namespace StockFlow.Application.Common.Models;
 
-// This class defines a standard format for all API responses
-// It ensures every response (success or error) looks consistent
+// Standard API response wrapper used across all endpoints.
+// Ensures consistent response structure for both success and error cases.
 public class ApiResponse<T>
 {
     // Indicates whether the request was successful
-    // true = success, false = failure
     public bool Success { get; set; }
 
-    // A message describing the result
-    // This is required, so it must always be provided
-    // Example: "Data fetched successfully" or "Product not found"
+    // Human-readable message describing the result
     public required string Message { get; set; }
 
-    // The actual data returned from the API
-    // Generic type (T) allows flexibility (object, list, etc.)
-    // Can be null when there is no data (e.g., error case)
+    // Actual response data (if any)
     public T? Data { get; set; }
 
-    // Contains error details (if any)
-    // Used for validation errors or additional error info
-    // Will be null when there are no errors
+    // Additional error details (used in validation or failure scenarios)
     public object? Errors { get; set; }
+
+    // Creates a standardized success response.
+    // Intended to be used in controllers instead of manual response construction.
+    public static ApiResponse<T> SuccessResponse(T data, string message)
+    {
+        return new ApiResponse<T>
+        {
+            Success = true,
+            Message = message,
+            Data = data
+        };
+    }
+
+    // Creates a standardized failure response.
+    // Used by middleware or services to return structured error details.
+    public static ApiResponse<T> FailResponse(string message, object? errors = null)
+    {
+        return new ApiResponse<T>
+        {
+            Success = false,
+            Message = message,
+            Errors = errors
+        };
+    }
 }

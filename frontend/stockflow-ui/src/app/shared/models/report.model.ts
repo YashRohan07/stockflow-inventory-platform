@@ -1,4 +1,5 @@
-// Summary data shown in report cards.
+// Summary data shown in report dashboard/cards.
+// Mirrors InventorySummaryDto from backend.
 export interface InventorySummary {
   totalProducts: number;
   totalQuantity: number;
@@ -7,7 +8,8 @@ export interface InventorySummary {
   lowStockProducts: number;
 }
 
-// One row inside inventory report table.
+// Represents a single row in inventory report table.
+// Mirrors InventoryReportItemDto from backend.
 export interface InventoryReportItem {
   sku: string;
   name: string;
@@ -17,11 +19,4 @@ export interface InventoryReportItem {
   purchasePrice: number;
   purchaseDate: string;
   totalValue: number;
-}
-
-// Common API response format.
-export interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
 }

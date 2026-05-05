@@ -5,17 +5,20 @@ using StockFlow.Infrastructure.Persistence;
 
 namespace StockFlow.Infrastructure.Repositories;
 
-// This class handles database operations for User entity
+// EF Core implementation of user data access.
+// Currently focused on authentication-related user lookup.
 public class UserRepository : IUserRepository
 {
     private readonly AppDbContext _context;
 
     public UserRepository(AppDbContext context)
     {
+        // DbContext provides access to the Users table.
         _context = context;
     }
 
-    // Fetch user by email from database
+    // Retrieves a user by email for login flow.
+    // Email should be normalized before reaching this method to keep lookup consistent.
     public async Task<User?> GetByEmailAsync(string email)
     {
         return await _context.Users

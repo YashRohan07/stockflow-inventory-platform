@@ -1,76 +1,60 @@
-// Used for creating and handling JWT tokens
 using System.IdentityModel.Tokens.Jwt;
-
-// Used for defining claims (user identity inside token)
 using System.Security.Claims;
-
-// Used for encoding the secret key
 using System.Text;
-
-// Used to read configuration values (JwtOptions)
 using Microsoft.Extensions.Options;
-
-// Used for security key and signing credentials
 using Microsoft.IdentityModel.Tokens;
-
-// Importing JwtOptions from Application layer (IMPORTANT FIX)
 using StockFlow.Application.Common.Options;
-
-// Importing interface from Application layer
 using StockFlow.Application.Interfaces.Services;
-
-// Importing User entity from Domain layer
 using StockFlow.Domain.Entities;
 
 namespace StockFlow.Infrastructure.Authentication;
 
-// This service is responsible for generating JWT tokens
+// Generates signed JWT tokens for authenticated users.
+// Implements the Application layer contract while keeping JWT-specific infrastructure details here.
 public class JwtTokenGenerator : IJwtTokenGenerator
 {
-    // Holds JWT configuration values
     private readonly JwtOptions _jwtOptions;
 
-    // Constructor gets JwtOptions via Dependency Injection
     public JwtTokenGenerator(IOptions<JwtOptions> jwtOptions)
     {
+        // JwtOptions is loaded from configuration and injected through the options pattern.
         _jwtOptions = jwtOptions.Value;
     }
 
-    // Generate JWT token for a logged-in user
+    // Creates a signed JWT containing the minimum required user identity claims.
     public string GenerateToken(User user)
     {
-        // Claims = user identity data stored inside token
+        // Claims represent user identity and authorization data stored inside the token.
+        // Keep claims minimal to avoid exposing unnecessary user information.
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), // user id
-            new Claim(ClaimTypes.Name, user.Name),                     // name
-            new Claim(ClaimTypes.Email, user.Email),                   // email
-            new Claim(ClaimTypes.Role, user.Role.ToString())           // role (Admin/Member)
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Name),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Role.ToString())
         };
 
-        // Convert SecretKey string into byte array
+        // Convert configured secret key into a symmetric signing key.
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_jwtOptions.SecretKey));
 
-        // Create signing credentials (HMAC SHA256)
+        // Use HMAC SHA256 to sign the token and prevent tampering.
         var credentials = new SigningCredentials(
             key,
             SecurityAlgorithms.HmacSha256);
 
-        // Create JWT token
         var token = new JwtSecurityToken(
-            issuer: _jwtOptions.Issuer,         // who issued token
-            audience: _jwtOptions.Audience,     // who can use token
-            claims: claims,                     // user data
-            expires: GetTokenExpiryTime(),      // expiry time
-            signingCredentials: credentials     // security signature
+            issuer: _jwtOptions.Issuer,
+            audience: _jwtOptions.Audience,
+            claims: claims,
+            expires: GetTokenExpiryTime(),
+            signingCredentials: credentials
         );
 
-        // Convert token object to string
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    // Returns expiry time based on configuration
+    // Calculates token expiration time using UTC for consistency across environments.
     public DateTime GetTokenExpiryTime()
     {
         return DateTime.UtcNow.AddMinutes(_jwtOptions.ExpiryMinutes);

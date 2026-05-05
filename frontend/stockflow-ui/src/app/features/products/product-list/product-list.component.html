@@ -5,7 +5,9 @@
       <p>Manage your products and stock.</p>
     </div>
 
-    <a routerLink="/products/create" class="btn-primary">
+    <a *ngIf="isAdmin"
+       routerLink="/products/create"
+       class="btn-primary">
       + Add Product
     </a>
   </div>
@@ -58,11 +60,17 @@
     </div>
 
     <div class="filter-actions">
-      <button type="button" class="btn-primary" (click)="applyFilters()">
+      <button type="button"
+              class="btn-primary"
+              (click)="applyFilters()"
+              [disabled]="isLoading">
         Apply Filters
       </button>
 
-      <button type="button" class="btn-outline" (click)="resetFilters()">
+      <button type="button"
+              class="btn-outline"
+              (click)="resetFilters()"
+              [disabled]="isLoading">
         Reset
       </button>
     </div>
@@ -97,21 +105,33 @@
           <td class="product-name">{{ product.name }}</td>
           <td>{{ product.size || '-' }}</td>
           <td>{{ product.color || '-' }}</td>
+
           <td>
             <span class="badge" [ngClass]="getQuantityClass(product.quantity)">
               {{ product.quantity }}
             </span>
           </td>
+
           <td>{{ product.purchasePrice }}</td>
           <td>{{ product.purchaseDate | date: 'yyyy-MM-dd' }}</td>
+
           <td class="actions">
-            <a [routerLink]="['/products/edit', product.id]" class="btn-small edit">
+            <a *ngIf="isAdmin"
+               [routerLink]="['/products/edit', product.id]"
+               class="btn-small edit">
               Edit
             </a>
 
-            <button type="button" class="btn-small delete" (click)="openDeleteModal(product)">
+            <button *ngIf="isAdmin"
+                    type="button"
+                    class="btn-small delete"
+                    (click)="openDeleteModal(product)">
               Delete
             </button>
+
+            <span *ngIf="!isAdmin" class="view-only-text">
+              View only
+            </span>
           </td>
         </tr>
       </tbody>
@@ -127,7 +147,9 @@
     <div class="pagination-actions">
       <label>
         Page Size
-        <select [(ngModel)]="pageSize" (change)="changePageSize()">
+        <select [(ngModel)]="pageSize"
+                (change)="changePageSize()"
+                [disabled]="isLoading">
           <option [ngValue]="5">5</option>
           <option [ngValue]="10">10</option>
           <option [ngValue]="20">20</option>
@@ -135,38 +157,60 @@
         </select>
       </label>
 
-      <button type="button" class="btn-outline" [disabled]="!hasPreviousPage" (click)="goToPreviousPage()">
+      <button type="button"
+              class="btn-outline"
+              [disabled]="!hasPreviousPage || isLoading"
+              (click)="goToPreviousPage()">
         Previous
       </button>
 
-      <button type="button" class="btn-outline" [disabled]="!hasNextPage" (click)="goToNextPage()">
+      <button type="button"
+              class="btn-outline"
+              [disabled]="!hasNextPage || isLoading"
+              (click)="goToNextPage()">
         Next
       </button>
     </div>
   </div>
 </div>
 
-<!-- Delete Modal -->
 <div class="modal-backdrop" *ngIf="showDeleteModal">
   <div class="delete-modal">
-    <div class="modal-icon">!</div>
+    <div class="modal-icon">
+      !
+    </div>
 
     <div class="modal-content">
-      <h3>Delete Product?</h3>
-      <p>
-        Are you sure you want to delete
-        <strong>{{ selectedProductName }}</strong>?
-        This action cannot be undone.
+      <h3>Delete Product</h3>
+
+      <p class="modal-warning">
+        This action is permanent and cannot be undone.
+      </p>
+
+      <p class="modal-product">
+        Product:
+        <strong>{{ selectedProductName }}</strong>
       </p>
     </div>
 
     <div class="modal-actions">
-      <button type="button" class="btn-outline" (click)="closeDeleteModal()" [disabled]="isDeleting">
+      <button type="button"
+              class="btn-modal-cancel"
+              (click)="closeDeleteModal()"
+              [disabled]="isDeleting">
         Cancel
       </button>
 
-      <button type="button" class="btn-danger" (click)="confirmDelete()" [disabled]="isDeleting">
-        {{ isDeleting ? 'Deleting...' : 'Delete Product' }}
+      <button type="button"
+              class="btn-modal-danger"
+              (click)="confirmDelete()"
+              [disabled]="isDeleting">
+        <span *ngIf="!isDeleting">Delete Product</span>
+
+        <span *ngIf="isDeleting" class="deleting-text">
+          <span class="spinner"></span>
+          Deleting...
+        </span>
       </button>
     </div>
   </div>

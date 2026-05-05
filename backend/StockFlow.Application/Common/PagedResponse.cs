@@ -1,27 +1,28 @@
 namespace StockFlow.Application.Common;
 
-// Generic paged response for list APIs.
-// This helps frontend show pagination information properly.
+// Standard paginated response wrapper for list-based APIs.
+// Provides both data and metadata required for frontend pagination handling.
 public class PagedResponse<T>
 {
-    // Current page items.
+    // Items for the current page
     public List<T> Items { get; set; } = new();
 
-    // Current page number.
+    // Current page number (1-based indexing)
     public int Page { get; set; }
 
-    // Number of items per page.
+    // Number of items per page
     public int PageSize { get; set; }
 
-    // Total items before pagination.
+    // Total number of items before pagination
     public int TotalCount { get; set; }
 
-    // Total pages calculated from total count and page size.
+    // Total number of pages based on TotalCount and PageSize
+    // Note: Assumes PageSize > 0 (should be validated at request level)
     public int TotalPages => (int)Math.Ceiling(TotalCount / (double)PageSize);
 
-    // Useful for frontend pagination buttons.
+    // Indicates if there is a previous page available
     public bool HasPreviousPage => Page > 1;
 
-    // Useful for frontend pagination buttons.
+    // Indicates if there is a next page available
     public bool HasNextPage => Page < TotalPages;
 }

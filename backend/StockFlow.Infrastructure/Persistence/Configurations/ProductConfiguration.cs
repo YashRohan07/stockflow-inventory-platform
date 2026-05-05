@@ -2,60 +2,72 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using StockFlow.Domain.Entities;
 
-namespace StockFlow.Infrastructure.Persistence.Configurations
+namespace StockFlow.Infrastructure.Persistence.Configurations;
+
+// Configures the Product entity for database mapping using EF Core Fluent API.
+// Defines table structure, constraints, indexes, and column rules.
+public class ProductConfiguration : IEntityTypeConfiguration<Product>
 {
-    // This class contains database rules for the Product entity.
-    // We keep database configuration separate to keep AppDbContext clean.
-    public class ProductConfiguration : IEntityTypeConfiguration<Product>
+    public void Configure(EntityTypeBuilder<Product> builder)
     {
-        public void Configure(EntityTypeBuilder<Product> builder)
+        // Map to "Products" table and define database-level constraints
+        builder.ToTable("Products", table =>
         {
-            // Table name
-            builder.ToTable("Products");
+            // Enforce non-negative quantity at database level (data integrity safeguard)
+            table.HasCheckConstraint(
+                "CK_Products_Quantity_NonNegative",
+                "[Quantity] >= 0");
 
-            // Primary key
-            builder.HasKey(p => p.Id);
+            // Enforce non-negative purchase price at database level
+            table.HasCheckConstraint(
+                "CK_Products_PurchasePrice_NonNegative",
+                "[PurchasePrice] >= 0");
+        });
 
-            // SKU is required and must be unique.
-            // SKU is a business identifier, so duplicate SKU should not be allowed.
-            builder.Property(p => p.SKU)
-                .IsRequired()
-                .HasMaxLength(50);
+        // Primary key
+        builder.HasKey(p => p.Id);
 
-            builder.HasIndex(p => p.SKU)
-                .IsUnique();
+        // SKU configuration (business identifier)
+        builder.Property(p => p.SKU)
+            .IsRequired()
+            .HasMaxLength(50);
 
-            // Product name is required.
-            builder.Property(p => p.Name)
-                .IsRequired()
-                .HasMaxLength(150);
+        // Unique index ensures SKU uniqueness at DB level
+        builder.HasIndex(p => p.SKU)
+            .IsUnique();
 
-            // Size is optional.
-            builder.Property(p => p.Size)
-                .HasMaxLength(50);
+        // Name configuration
+        builder.Property(p => p.Name)
+            .IsRequired()
+            .HasMaxLength(150);
 
-            // Color is optional.
-            builder.Property(p => p.Color)
-                .HasMaxLength(50);
+        // Index to improve search/filter performance on product name
+        builder.HasIndex(p => p.Name);
 
-            // Quantity is required.
-            // Database rule: Quantity cannot be less than 0.
-            builder.Property(p => p.Quantity)
-                .IsRequired();
+        // Optional attributes with length constraints
+        builder.Property(p => p.Size)
+            .HasMaxLength(50);
 
-            builder.HasCheckConstraint("CK_Products_Quantity_NonNegative", "[Quantity] >= 0");
+        builder.Property(p => p.Color)
+            .HasMaxLength(50);
 
-            // Purchase price is required.
-            // decimal(18,2) means 18 total digits and 2 digits after decimal point.
-            builder.Property(p => p.PurchasePrice)
-                .IsRequired()
-                .HasColumnType("decimal(18,2)");
+        // Quantity configuration
+        builder.Property(p => p.Quantity)
+            .IsRequired();
 
-            builder.HasCheckConstraint("CK_Products_PurchasePrice_NonNegative", "[PurchasePrice] >= 0");
+        // Index for faster filtering/sorting by quantity
+        builder.HasIndex(p => p.Quantity);
 
-            // Purchase date is required.
-            builder.Property(p => p.PurchaseDate)
-                .IsRequired();
-        }
+        // Price configuration with fixed precision
+        builder.Property(p => p.PurchasePrice)
+            .IsRequired()
+            .HasColumnType("decimal(18,2)");
+
+        // Purchase date configuration
+        builder.Property(p => p.PurchaseDate)
+            .IsRequired();
+
+        // Index for date-based queries (reporting, filtering)
+        builder.HasIndex(p => p.PurchaseDate);
     }
 }

@@ -5,30 +5,31 @@ using StockFlow.Application.Interfaces.Services;
 
 namespace StockFlow.API.Controllers;
 
-// This controller handles product CRUD API requests.
-// Controller should stay thin.
-// Business logic is handled by ProductService.
+// Handles product and inventory-related API operations.
+// Controller remains thin by delegating business rules, validation flow, and data access coordination to ProductService.
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
 public class ProductsController : ControllerBase
 {
+    // Application service responsible for product CRUD, search, filter, sort, and pagination logic.
     private readonly IProductService _productService;
 
-    // Product service is injected using Dependency Injection.
     public ProductsController(IProductService productService)
     {
+        // Dependency Injection keeps the controller loosely coupled and easier to test.
         _productService = productService;
     }
 
-    // GET: /api/products
-    // Example:
-    // /api/products?search=shirt&purchaseDateFrom=2026-01-01&sortBy=price&sortOrder=asc&page=1&pageSize=10
-    // Admin and Member can view product list.
+    // Endpoint: GET /api/products
+    // Purpose: Retrieve products with optional search, date filtering, sorting, and pagination.
+    // Access: Admin and Member can view product/inventory data.
+    // Example: /api/products?search=shirt&purchaseDateFrom=2026-01-01&sortBy=price&sortOrder=asc&page=1&pageSize=10
     [HttpGet]
     [Authorize(Roles = "Admin,Member")]
     public async Task<IActionResult> GetAllProducts([FromQuery] ProductQueryParametersDto query)
     {
+        // Query processing is handled in the service layer to keep API logic clean.
         var products = await _productService.GetAllAsync(query);
 
         return Ok(new
@@ -39,8 +40,10 @@ public class ProductsController : ControllerBase
         });
     }
 
-    // GET: /api/products/{id}
-    // Admin and Member can view product details.
+    // Endpoint: GET /api/products/{id}
+    // Purpose: Retrieve a single product by ID.
+    // Access: Admin and Member can view product details.
+    // Note: The route constraint ensures only integer IDs match this endpoint.
     [HttpGet("{id:int}")]
     [Authorize(Roles = "Admin,Member")]
     public async Task<IActionResult> GetProductById(int id)
@@ -55,8 +58,10 @@ public class ProductsController : ControllerBase
         });
     }
 
-    // POST: /api/products
-    // Only Admin can create product.
+    // Endpoint: POST /api/products
+    // Purpose: Create a new product record.
+    // Access: Only Admin can create product/inventory entries.
+    // Note: DTO validation should run before service execution if validation pipeline is configured.
     [HttpPost]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto dto)
@@ -74,8 +79,10 @@ public class ProductsController : ControllerBase
             });
     }
 
-    // PUT: /api/products/{id}
-    // Only Admin can update product.
+    // Endpoint: PUT /api/products/{id}
+    // Purpose: Update an existing product record.
+    // Access: Only Admin can modify product/inventory data.
+    // Note: Not-found and validation errors should be handled by service layer and global exception middleware.
     [HttpPut("{id:int}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateProduct(int id, [FromBody] UpdateProductDto dto)
@@ -90,8 +97,10 @@ public class ProductsController : ControllerBase
         });
     }
 
-    // DELETE: /api/products/{id}
-    // Only Admin can delete product.
+    // Endpoint: DELETE /api/products/{id}
+    // Purpose: Delete a product record.
+    // Access: Only Admin can remove product/inventory data.
+    // Note: Delete rules and not-found handling are delegated to the service layer.
     [HttpDelete("{id:int}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteProduct(int id)

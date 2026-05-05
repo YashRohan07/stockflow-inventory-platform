@@ -1,167 +1,259 @@
 # StockFlow - Inventory & Product Management Platform
 
-StockFlow is a full-stack Inventory & Product Management Platform built using ASP.NET Core and Angular.
+![.NET](https://img.shields.io/badge/.NET-8-blue)
+![Angular](https://img.shields.io/badge/Angular-17-red)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-It is designed as a learning-first, industry-aligned project focused on backend architecture, frontend structure, system design, and scalable development practices.
+StockFlow is a **full-stack Inventory & Product Management Platform** built using **ASP.NET Core (Backend)** and **Angular (Frontend)**.
 
----
-
-## Project Overview
-
-StockFlow provides a structured system to manage product and inventory data with role-based access and reporting capabilities.
-
-The project is being developed phase-by-phase to ensure strong understanding of:
-
-- clean architecture
-- scalable system design
-- real-world backend engineering
-- frontend-backend integration
+It is designed as a **production-style, scalable system** demonstrating **clean architecture, system design, performance optimization, and full-stack engineering practices**.
 
 ---
 
-## Problem It Solves
+### Screenshots
 
-- manage product records  
-- manage inventory and stock data  
-- provide role-based access 
-- support reporting 
-- ensure structured and scalable data handling  
+#### Login
+![Login](./Documentation/screenshots/login.png)
+
+#### Product Inventory
+![Products](./Documentation/screenshots/products.png)
+
+#### Reports Dashboard
+![Reports](./Documentation/screenshots/reports.png)
+
+#### PDF Report
+![PDF](./Documentation/screenshots/pdf.png)
 
 ---
 
-## Technology Stack
+## Why This Project Matters
+
+Most inventory systems stop at CRUD.
+
+StockFlow goes further by implementing:
+
+- real-world backend layering (Controller → Service → Repository)
+- performance-aware querying (filter, sort, pagination)
+- reporting layer with aggregation logic
+- PDF export using backend-generated documents
+
+This demonstrates how production-grade backend systems are structured beyond basic CRUD applications.
+
+---
+
+## Project Highlights
+
+✔ Layered backend architecture  
+✔ JWT Authentication + Role-Based Access Control (Admin / Member)  
+✔ Advanced product listing (search, filter, sort, pagination)  
+✔ Inventory reporting system with PDF export  
+✔ Global error handling & request logging (middleware)  
+✔ Database optimization (indexing + stored procedure + raw SQL)  
+✔ Angular feature-based architecture with interceptors & guards  
+
+---
+
+## Backend Architecture
+
+StockFlow follows a layered architecture aligned with Clean Architecture principles:
+
+API Layer → Application Layer → Domain Layer  
+                ↓  
+        Infrastructure Layer  
+
+**Flow:**  
+Controller → Service → Repository → Database
+
+---
+
+## Frontend Architecture
+
+```
+
+src/app
+├── core (services, guards, interceptors)
+├── shared (models, utilities)
+└── features
+├── auth
+├── products
+└── reports
+
+```
+
+---
+
+## Full Stack Flow
+
+```
+
+User → Angular UI → API Service → ASP.NET API
+→ Middleware → Controller → Service → Repository → Database
+→ Response → UI Update
+
+```
+
+---
+
+## Tech Stack
 
 ### Backend
 
 - ASP.NET Core Web API  
 - Entity Framework Core  
 - SQL Server  
-- JWT Authentication 
-
----
+- JWT Authentication  
+- Middleware (Exception + Logging)  
+- Stored Procedures + Raw SQL  
 
 ### Frontend
 
-- Angular (Standalone)  
+- Angular (Standalone Architecture)  
 - TypeScript  
 - Angular Router  
 - HttpClient  
+- Reactive Forms  
+- Interceptors (Auth + Error Handling)  
 
 ---
 
-## Architecture
+## Core Features
 
-### Backend (Layered Architecture)
+### Authentication & Authorization
 
-```
-
-API Layer → Application Layer → Domain Layer
-↘ Infrastructure Layer (Database)
-
-```
-
-- API Layer → handles HTTP requests and responses  
-- Application Layer → business logic 
-- Domain Layer → core entities (Product, User)  
-- Infrastructure Layer → database and external services  
+- JWT-based authentication  
+- Role-based access (Admin / Member)  
+- Route protection using Angular guards  
 
 ---
 
-### Frontend (Feature-Based Architecture)
+### Product & Inventory Management
 
-```
-
-src/app
-│
-├── core
-│   ├── services
-│   ├── guards
-│   └── interceptors
-│
-├── shared
-│   ├── components
-│   ├── models
-│   └── utils
-│
-└── features
-├── dashboard
-├── products
-├── auth
-└── reports
-
-```
-
-- core → global logic (API service, auth, interceptors)  
-- shared → reusable components and models  
-- features → business modules  
+- Create, update, delete products  
+- SKU-based unique identification  
+- Quantity and price tracking  
 
 ---
 
-## Full Stack Request Flow
+### Advanced Listing
+
+- search (SKU, name)  
+- filter (date range)  
+- sort (price, quantity, date)  
+- pagination  
+
+---
+
+### Reporting System
+
+- full inventory report  
+- low stock report (dynamic threshold)  
+- summary analytics:
+  - total products  
+  - total quantity  
+  - average price  
+  - total inventory value  
+
+---
+
+### PDF Export
+
+- downloadable reports  
+- clean tabular format  
+- backend-generated using QuestPDF  
+
+---
+
+### Error Handling & Logging
+
+- global exception middleware  
+- structured API responses  
+- request logging with execution time  
+
+---
+
+### Database Optimization
+
+- indexing (Name, Quantity, PurchaseDate)  
+- stored procedure for low stock queries  
+- raw SQL integration (FromSqlRaw)  
+- database-level aggregation  
+
+---
+
+## System Design Considerations
+
+- Strict separation of concerns across API, application, and data layers  
+- Query optimization using indexing  
+- Aggregation handled at database level  
+- Stateless authentication using JWT  
+- Scalable API structure with versioning readiness  
+
+---
+
+## Key Engineering Decisions
+
+- Adopted layered architecture to ensure maintainability and scalability  
+- Chose JWT for stateless authentication and better scalability  
+- Implemented pagination to prevent large dataset performance issues  
+- Used stored procedures for optimized reporting queries  
+
+---
+
+## API Endpoints
+
+### Auth
+```
+
+POST /api/auth/login
 
 ```
 
-User (Browser)
-↓
-Angular Component
-↓
-ApiService
-↓
-HttpClient
-↓
-ASP.NET Core API
-↓
-Middleware (Exception + Logging)
-↓
-Controller
-↓
-DbContext (EF Core)
-↓
-Database
-↓
-Response (JSON)
-↓
-Frontend UI Update
+### Products
+```
+
+GET    /api/products
+POST   /api/products
+PUT    /api/products/{id}
+DELETE /api/products/{id}
+
+```
+
+### Reports
+```
+
+GET /api/reports/summary
+GET /api/reports/inventory
+GET /api/reports/low-stock
+GET /api/reports/inventory/pdf
+GET /api/reports/low-stock/pdf
 
 ```
 
 ---
 
-## Development Roadmap
+## Project Structure
 
-The project is being developed in structured phases:
+```
 
-* Phase 0 — Foundation, Planning, and Architecture
-* Phase 1 — Backend Foundation
-* Phase 2 — Frontend Foundation
-* Phase 3 — Authentication and Authorization
-* Phase 4 — Product and Inventory Management (CRUD)
-* Phase 5 — Product Listing, Search, Filter, Sort, and Pagination
-* Phase 6 — Inventory Reporting and Advanced Features
-* Phase 7 — Error Handling, Logging, and Quality Improvements
-* Phase 8 — Testing
-* Phase 9 — Deployment and Production Readiness
-* Phase 10 — Final Review and GitHub Polish
+/backend
+├── API
+├── Application
+├── Domain
+└── Infrastructure
 
----
+/frontend
+└── Angular UI
 
-## Learning Focus
+/Documentation
+└── Phase-based docs & screenshots
 
-- backend architecture  
-- frontend architecture  
-- system design fundamentals  
-- clean code structure  
-- modular development  
-- API design  
-- full-stack integration  
+````
 
 ---
 
-## How to Run the Project
+## How to Run Locally
 
 ### Prerequisites
-
-Make sure you have installed:
 
 - .NET SDK  
 - Node.js  
@@ -169,81 +261,66 @@ Make sure you have installed:
 
 ---
 
-### 1. Clone the repository
+### 1. Clone Repository
 
-```
-
-git clone [https://github.com/YashRohan07/stockflow-inventory-platform.git](https://github.com/YashRohan07/stockflow-inventory-platform.git)
+```bash
+git clone https://github.com/YashRohan07/stockflow-inventory-platform.git
 cd stockflow-inventory-platform
-
-```
+````
 
 ---
 
-### 🔹 2. Run Backend (Terminal 1)
+### 2. Run Backend
 
-```
-
+```bash
 dotnet run --project backend/StockFlow.API/StockFlow.API.csproj
-
 ```
 
-You should see:
+Backend runs on:
 
 ```
-
-Now listening on: [http://localhost:5118](http://localhost:5118)
-
+http://localhost:5118
 ```
 
 ---
 
-### 3. Run Frontend (Terminal 2)
+### 3. Run Frontend
 
-```
-
+```bash
 cd frontend/stockflow-ui
 ng serve
-
 ```
 
-Open browser:
+Open:
 
 ```
-
-[http://localhost:4200](http://localhost:4200)
-
+http://localhost:4200
 ```
 
 ---
 
-## Key Concepts Applied
+## System Readiness
 
-* layered architecture
-* separation of concerns
-* dependency injection
-* middleware pipeline
-* feature-based frontend structure
-* reusable API services
-* strong typing (TypeScript models)
+✔ Production-style architecture
+✔ Performance-aware design
+✔ Structured error handling
+✔ Reporting + analytics foundation
 
 ---
 
-## Why This Project Matters
+## Future Improvements
 
-This project demonstrates:
-
-* real-world backend architecture
-* scalable frontend structure
-* clean code practices
-* full-stack integration
-* system design thinking
+* Dockerize backend and frontend for environment consistency
+* Deploy to Azure (App Service + SQL Database)
+* Introduce background jobs (Hangfire) for async report generation
+* Add Redis caching for frequently accessed report data
+* Implement unit and integration testing (xUnit + Angular testing)
+* Build real-time dashboard analytics (SignalR)
 
 ---
 
 ## Author
 
 **Yash Rohan**
-Software Developer (ASP.NET Core, Angular, SQL)
-
+Software Developer | ASP.NET Core | Angular | SQL Server
 

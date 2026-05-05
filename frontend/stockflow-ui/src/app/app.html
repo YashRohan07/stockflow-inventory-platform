@@ -1,16 +1,16 @@
-<!-- Main navigation bar -->
+<!-- Main navigation bar shown only for authenticated users -->
 <nav class="navbar" *ngIf="authService.isLoggedIn()">
 
-  <!-- LEFT SIDE -->
+  <!-- Left section: brand and primary navigation -->
   <div class="nav-left">
 
-    <!-- Brand -->
+    <!-- Application brand -->
     <div class="brand">
       <span class="brand-logo">📦</span>
       <span class="brand-name">StockFlow</span>
     </div>
 
-    <!-- Navigation Links -->
+    <!-- Primary navigation links -->
     <div class="nav-links">
       <a routerLink="/products" routerLinkActive="active">Products</a>
       <a routerLink="/reports" routerLinkActive="active">Reports</a>
@@ -18,17 +18,17 @@
 
   </div>
 
-  <!-- RIGHT SIDE -->
+  <!-- Right section: current user and session action -->
   <div class="nav-right">
 
-    <!-- User Name ONLY -->
+    <!-- Displays authenticated user's name -->
     <div class="user-info">
       <span class="user-name">
         {{ authService.getUser()?.name }}
       </span>
     </div>
 
-    <!-- Logout Button -->
+    <!-- Clears current session and redirects user to login -->
     <button type="button"
             class="logout-btn"
             (click)="logout()">
@@ -39,5 +39,5 @@
 
 </nav>
 
-<!-- Routed pages -->
+<!-- Routed feature pages are rendered here -->
 <router-outlet></router-outlet>

@@ -10,14 +10,13 @@ import {
 
 import { ProductService } from '../product.service';
 
-// This standalone component handles both create and edit product form.
 @Component({
   selector: 'app-product-form',
   standalone: true,
   imports: [
-    CommonModule,        // Needed for *ngIf
-    ReactiveFormsModule, // Needed for formGroup
-    RouterModule         // Needed for routerLink
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule
   ],
   templateUrl: './product-form.component.html',
   styleUrls: ['./product-form.component.scss']
@@ -32,10 +31,10 @@ export class ProductFormComponent implements OnInit {
   errorMessage = '';
 
   constructor(
-    private fb: FormBuilder,
-    private productService: ProductService,
-    private route: ActivatedRoute,
-    private router: Router
+    private readonly fb: FormBuilder,
+    private readonly productService: ProductService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router
   ) { }
 
   ngOnInit(): void {
@@ -50,7 +49,6 @@ export class ProductFormComponent implements OnInit {
     }
   }
 
-  // Create reactive form with validation.
   buildForm(): void {
     this.productForm = this.fb.group({
       sku: ['', [Validators.required, Validators.maxLength(50)]],
@@ -63,23 +61,26 @@ export class ProductFormComponent implements OnInit {
     });
   }
 
-  // Load product data for edit mode.
   loadProduct(id: number): void {
     this.productService.getProductById(id).subscribe({
       next: (response) => {
         const product = response.data;
 
+        if (!product) {
+          this.errorMessage = 'Product not found.';
+          return;
+        }
+
         this.productForm.patchValue({
           sku: product.sku,
           name: product.name,
-          size: product.size,
-          color: product.color,
+          size: product.size ?? '',
+          color: product.color ?? '',
           quantity: product.quantity,
           purchasePrice: product.purchasePrice,
           purchaseDate: product.purchaseDate.substring(0, 10)
         });
 
-        // SKU should not be changed after creation.
         this.productForm.get('sku')?.disable();
       },
       error: (error) => {
@@ -89,7 +90,6 @@ export class ProductFormComponent implements OnInit {
     });
   }
 
-  // Submit create or update request.
   submitForm(): void {
     if (this.productForm.invalid) {
       this.productForm.markAllAsTouched();
@@ -106,7 +106,6 @@ export class ProductFormComponent implements OnInit {
     }
   }
 
-  // Create product.
   createProduct(): void {
     const formValue = this.productForm.getRawValue();
 
@@ -122,7 +121,6 @@ export class ProductFormComponent implements OnInit {
 
     this.productService.createProduct(request).subscribe({
       next: () => {
-        // replaceUrl prevents weird back-navigation and refresh issues.
         this.router.navigateByUrl('/products', { replaceUrl: true });
       },
       error: (error) => {
@@ -133,7 +131,6 @@ export class ProductFormComponent implements OnInit {
     });
   }
 
-  // Update product.
   updateProduct(): void {
     const formValue = this.productForm.getRawValue();
 
@@ -158,7 +155,6 @@ export class ProductFormComponent implements OnInit {
     });
   }
 
-  // Easy access for HTML validation messages.
   get f() {
     return this.productForm.controls;
   }

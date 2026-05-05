@@ -1,24 +1,39 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<!-- ASP.NET Core Web API project targeting .NET 10 -->
+		<TargetFramework>net10.0</TargetFramework>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.7">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
-  </ItemGroup>
+		<!-- Enables nullable reference type checks for safer code -->
+		<Nullable>enable</Nullable>
 
-  <ItemGroup>
-    <ProjectReference Include="..\StockFlow.Application\StockFlow.Application.csproj" />
-    <ProjectReference Include="..\StockFlow.Infrastructure\StockFlow.Infrastructure.csproj" />
-  </ItemGroup>
+		<!-- Reduces repetitive using statements through SDK-provided implicit usings -->
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- Enables JWT Bearer authentication for protected API endpoints -->
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.7" />
+
+		<!-- Provides OpenAPI support for API metadata generation -->
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
+
+		<!-- Required for EF Core design-time tooling such as migrations -->
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.7">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+
+		<!-- Adds Swagger UI and API documentation support -->
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- References Application layer for services, DTOs, interfaces, and options -->
+		<ProjectReference Include="..\StockFlow.Application\StockFlow.Application.csproj" />
+
+		<!-- References Infrastructure layer for DI registration, persistence, and external implementations -->
+		<ProjectReference Include="..\StockFlow.Infrastructure\StockFlow.Infrastructure.csproj" />
+	</ItemGroup>
 
 </Project>

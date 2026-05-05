@@ -3,30 +3,28 @@ using StockFlow.Application.Common.Models;
 
 namespace StockFlow.API.Controllers;
 
-// Marks this class as an API controller
 [ApiController]
-
-// Base route: api/health
 [Route("api/[controller]")]
 public class HealthController : ControllerBase
 {
-    // GET: api/health
-    // This endpoint checks if API is running properly
+    // Endpoint: GET /api/health
+    // Purpose: Check API availability and basic system status
+    // Note: Can be extended later to include DB, cache, external service checks
     [HttpGet]
     public IActionResult GetHealth()
     {
-        // Return a standard API response
         return Ok(new ApiResponse<object>
         {
-            Success = true,                     // Request Success
-            Message = "API is healthy",         // Simple message
+            Success = true,
+            Message = "API is healthy",
             Data = new
             {
-                status = "Healthy",             // API status
-                application = "StockFlow API",  // Application name
-                timestamp = DateTime.UtcNow     // Current time (UTC)
+                status = "Healthy",
+                application = "StockFlow API",
+                environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"),
+                timestamp = DateTime.UtcNow
             },
-            Errors = null                       // No errors
+            Errors = null
         });
     }
 }

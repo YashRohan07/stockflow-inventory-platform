@@ -1,26 +1,27 @@
 namespace StockFlow.Application.DTOs.Products;
 
-// This DTO is used when updating an existing product.
-// SKU is not included because SKU is a business identity.
+// Represents input data for updating an existing product.
+// SKU is intentionally excluded as it is treated as an immutable business identifier.
 public class UpdateProductDto
 {
-    // Product name is required.
+    // Product name (required for identification and search)
     public string Name { get; set; } = string.Empty;
 
-    // Size is optional.
+    // Optional size attribute (e.g., S, M, L, numeric sizes)
     public string? Size { get; set; }
 
-    // Color is optional.
+    // Optional color attribute (used for filtering/display)
     public string? Color { get; set; }
 
-    // Quantity means available stock.
-    // It cannot be negative.
+    // Available stock quantity
+    // Must be >= 0 (validated before persistence)
     public int Quantity { get; set; }
 
-    // Purchase price means buying price.
-    // It cannot be negative.
+    // Purchase (cost) price per unit
+    // Must be >= 0 and represents cost price (not selling price)
     public decimal PurchasePrice { get; set; }
 
-    // Purchase date means when the product was purchased.
+    // Date when the product was purchased or stocked
+    // Should be handled as UTC for consistency
     public DateTime PurchaseDate { get; set; }
 }

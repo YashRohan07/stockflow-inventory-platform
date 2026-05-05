@@ -1,9 +1,13 @@
 // Production environment configuration
-// This will be used when the app is deployed
+// Used when building the application for production deployment.
 
 export const environment = {
   production: true,
 
-  // Replace this with your real deployed API URL later
+  // Base URL of deployed backend API.
+  // IMPORTANT:
+  // - Should NOT include trailing slash
+  // - Should match backend hosting URL exactly
+  // - Replace before production deployment
   apiBaseUrl: 'https://your-production-api-url.com/api'
 };

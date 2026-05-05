@@ -2,61 +2,58 @@ using StockFlow.Application.DTOs.Products;
 
 namespace StockFlow.Application.Validators;
 
-// This validator checks product creation input.
-// It returns a list of validation error messages.
+// Performs manual validation for product creation input.
+// Returns a list of validation error messages instead of throwing exceptions.
+// This approach keeps validation simple and explicit without introducing external libraries.
 public static class CreateProductValidator
 {
     public static List<string> Validate(CreateProductDto dto)
     {
         var errors = new List<string>();
 
-        // SKU validation
+        // SKU: required and length constraint
         if (string.IsNullOrWhiteSpace(dto.SKU))
         {
             errors.Add("SKU is required.");
         }
-
-        if (!string.IsNullOrWhiteSpace(dto.SKU) && dto.SKU.Length > 50)
+        else if (dto.SKU.Length > 50)
         {
             errors.Add("SKU cannot be more than 50 characters.");
         }
 
-        // Name validation
+        // Name: required and length constraint
         if (string.IsNullOrWhiteSpace(dto.Name))
         {
             errors.Add("Name is required.");
         }
-
-        if (!string.IsNullOrWhiteSpace(dto.Name) && dto.Name.Length > 150)
+        else if (dto.Name.Length > 150)
         {
             errors.Add("Name cannot be more than 150 characters.");
         }
 
-        // Size validation
+        // Optional fields: validate only if provided
         if (!string.IsNullOrWhiteSpace(dto.Size) && dto.Size.Length > 50)
         {
             errors.Add("Size cannot be more than 50 characters.");
         }
 
-        // Color validation
         if (!string.IsNullOrWhiteSpace(dto.Color) && dto.Color.Length > 50)
         {
             errors.Add("Color cannot be more than 50 characters.");
         }
 
-        // Quantity validation
+        // Numeric validations (basic domain constraints)
         if (dto.Quantity < 0)
         {
             errors.Add("Quantity cannot be negative.");
         }
 
-        // Purchase price validation
         if (dto.PurchasePrice < 0)
         {
             errors.Add("Purchase price cannot be negative.");
         }
 
-        // Purchase date validation
+        // Required date validation
         if (dto.PurchaseDate == default)
         {
             errors.Add("Purchase date is required.");

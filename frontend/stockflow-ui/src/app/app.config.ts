@@ -3,20 +3,30 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
 import { routes } from './app.routes';
-import { authInterceptor } from './core/interceptors/auth-interceptor';
 
-// Main application configuration
+// Interceptors
+import { authInterceptor } from './core/interceptors/auth-interceptor';
+import { errorInterceptor } from './core/interceptors/error.interceptor';
+
+// Central application configuration.
+// Registers routing, HTTP client, and global interceptors.
 export const appConfig: ApplicationConfig = {
   providers: [
-    // Global error handling
+    // Global Angular runtime error handling
     provideBrowserGlobalErrorListeners(),
 
-    // Enable routing
+    // Application routing configuration
     provideRouter(routes),
 
-    // Enable HttpClient + attach interceptor
+    // HttpClient with interceptors
+    // Execution order:
+    // Request → top to bottom
+    // Response/Error → bottom to top
     provideHttpClient(
-      withInterceptors([authInterceptor])
+      withInterceptors([
+        authInterceptor,   // attaches JWT token to outgoing requests
+        errorInterceptor   // handles API errors globally
+      ])
     )
   ]
 };

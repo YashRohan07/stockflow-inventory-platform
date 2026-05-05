@@ -7,19 +7,20 @@ using StockFlow.Domain.Entities;
 
 namespace StockFlow.Application.Services;
 
-// ProductService contains product business logic.
-// It validates input, checks business rules, and uses repository for database work.
+// Handles product and inventory business logic.
+// Coordinates validation, business rules, repository access, and DTO mapping.
 public class ProductService : IProductService
 {
     private readonly IProductRepository _productRepository;
 
-    // Repository is injected using Dependency Injection.
     public ProductService(IProductRepository productRepository)
     {
+        // Repository abstraction keeps database access separate from business logic.
         _productRepository = productRepository;
     }
 
-    // Get products using query parameters and convert entities to response DTOs.
+    // Retrieves products using search, filtering, sorting, and pagination.
+    // Converts domain entities into response DTOs before returning data to the API layer.
     public async Task<PagedResponse<ProductResponseDto>> GetAllAsync(ProductQueryParametersDto query)
     {
         var pagedProducts = await _productRepository.GetAllAsync(query);
@@ -36,7 +37,8 @@ public class ProductService : IProductService
         };
     }
 
-    // Get a single product by Id.
+    // Retrieves a single product by ID.
+    // Not-found handling is done here so controllers remain thin.
     public async Task<ProductResponseDto> GetByIdAsync(int id)
     {
         var product = await _productRepository.GetByIdAsync(id);
@@ -49,10 +51,10 @@ public class ProductService : IProductService
         return MapToResponseDto(product);
     }
 
-    // Create a new product.
+    // Creates a new product after validation and SKU uniqueness checks.
     public async Task<ProductResponseDto> CreateAsync(CreateProductDto dto)
     {
-        // Validate input first.
+        // Validate input before applying business rules or database operations.
         var validationErrors = CreateProductValidator.Validate(dto);
 
         if (validationErrors.Any())
@@ -60,10 +62,10 @@ public class ProductService : IProductService
             throw new ArgumentException(string.Join(" ", validationErrors));
         }
 
-        // Normalize SKU before checking duplicate.
+        // Normalize SKU before duplicate check to avoid whitespace-based duplicates.
         var normalizedSku = dto.SKU.Trim();
 
-        // SKU must be unique.
+        // SKU is treated as a unique business identifier.
         var skuExists = await _productRepository.SkuExistsAsync(normalizedSku);
 
         if (skuExists)
@@ -71,7 +73,7 @@ public class ProductService : IProductService
             throw new InvalidOperationException("A product with this SKU already exists.");
         }
 
-        // Convert DTO to entity.
+        // Map validated input DTO to domain entity.
         var product = new Product
         {
             SKU = normalizedSku,
@@ -88,10 +90,10 @@ public class ProductService : IProductService
         return MapToResponseDto(product);
     }
 
-    // Update an existing product.
+    // Updates an existing product while preserving immutable business identity fields.
     public async Task<ProductResponseDto> UpdateAsync(int id, UpdateProductDto dto)
     {
-        // Validate input first.
+        // Validate input before loading and mutating the entity.
         var validationErrors = UpdateProductValidator.Validate(dto);
 
         if (validationErrors.Any())
@@ -106,7 +108,7 @@ public class ProductService : IProductService
             throw new KeyNotFoundException("Product not found.");
         }
 
-        // SKU is not updated because it is a business identifier.
+        // SKU is intentionally not updated because it represents product business identity.
         product.Name = dto.Name.Trim();
         product.Size = string.IsNullOrWhiteSpace(dto.Size) ? null : dto.Size.Trim();
         product.Color = string.IsNullOrWhiteSpace(dto.Color) ? null : dto.Color.Trim();
@@ -119,7 +121,7 @@ public class ProductService : IProductService
         return MapToResponseDto(product);
     }
 
-    // Delete an existing product.
+    // Deletes an existing product after verifying it exists.
     public async Task DeleteAsync(int id)
     {
         var product = await _productRepository.GetByIdAsync(id);
@@ -132,8 +134,8 @@ public class ProductService : IProductService
         await _productRepository.DeleteAsync(product);
     }
 
-    // Convert Product entity to ProductResponseDto.
-    // This keeps entity and API response separate.
+    // Maps domain entity to response DTO.
+    // Keeps internal domain model separate from public API response contract.
     private static ProductResponseDto MapToResponseDto(Product product)
     {
         return new ProductResponseDto

@@ -8,7 +8,7 @@
 
 StockFlow is a full-stack Inventory & Product Management Platform built using ASP.NET Core and Angular.
 
-It is designed as a learning-focused but industry-standard project that demonstrates backend architecture, frontend structure, authentication, reporting, and system design thinking.
+It is designed as a learning-focused but industry-standard project that demonstrates backend architecture, frontend structure, authentication, reporting, performance optimization, and system design thinking.
 
 ---
 
@@ -42,6 +42,7 @@ It is designed as a learning-focused but industry-standard project that demonstr
 * SQL Server
 * JWT Authentication
 * Middleware (Logging + Exception Handling)
+* Stored Procedures + Raw SQL (Performance Optimization)
 
 ---
 
@@ -52,6 +53,7 @@ It is designed as a learning-focused but industry-standard project that demonstr
 * Angular Router
 * HttpClient
 * Reactive Forms
+* Interceptors (Auth + Error Handling)
 
 ---
 
@@ -243,8 +245,6 @@ Response / File Download
 Frontend UI Update
 ```
 
-This shows how reporting works from UI to backend and back.
-
 ---
 
 ## 7. Phase-by-Phase Summary
@@ -341,88 +341,49 @@ This shows how reporting works from UI to backend and back.
 
 ---
 
+### Phase 7 — Quality and Database Optimization
+
+* global exception handling implemented using middleware
+* request logging system added for monitoring and debugging
+* structured API response system introduced
+* custom exception classes implemented
+* database indexing added (Name, Quantity, PurchaseDate)
+* stored procedure implemented for low stock reporting
+* raw SQL execution integrated using EF Core
+* database-level aggregation methods added for performance
+* frontend error handling implemented using interceptor
+* improved system reliability, consistency, and performance for real-world usage
+
+---
+
+### Phase 7 Impact (Before vs After)
+
+Before Phase 7:
+
+* system worked but lacked reliability
+* no centralized error handling
+* no logging visibility
+* queries were not optimized
+
+After Phase 7:
+
+* system is stable and predictable
+* errors are handled globally
+* requests are logged and traceable
+* database queries are optimized for performance
+
+---
+
 ## 8. Key Engineering Decisions
 
-### Use Layered Architecture
-
-* clean separation of responsibilities
-* scalable structure
-
----
-
-### Use JWT Authentication
-
-* stateless
-* scalable
-* suitable for SPA
-
----
-
-### Use Service + Repository Pattern
-
-* business logic separated
-* easier testing
-
----
-
-### Use DTO-Based API Design
-
-* clean separation between internal data and API
-* prevents direct exposure
-* improves maintainability
-
----
-
-### Use Validation Layer
-
-* prevents invalid data
-* improves UX
-* ensures data integrity
-
----
-
-### Use Angular Feature-Based Structure
-
-* modular
-* scalable
-
----
-
-### Use Interceptors
-
-* automatic token attachment
-* cleaner API calls
-
----
-
-### Use Guards
-
-* route protection
-* better UX
-
----
-
-## 8.1 Design Trade-offs
-
-### Not using full Clean Architecture
-
-* simpler layered approach
-* easier to understand
-* avoids over-engineering
-
----
-
-### No caching implemented
-
-* simpler system
-* acceptable for current scale
-
----
-
-### No concurrency handling (yet)
-
-* acceptable for low usage
-* will improve later
+* layered architecture for clean structure
+* JWT for scalable authentication
+* service + repository pattern for separation of logic
+* DTO-based API design for clean contracts
+* validation layer for data integrity
+* Angular feature-based structure for scalability
+* interceptors for automation
+* guards for route protection
 
 ---
 
@@ -437,44 +398,48 @@ This shows how reporting works from UI to backend and back.
 * consistent API design
 * request tracing
 * pagination for performance
+* database indexing for faster queries
+* centralized middleware pipeline
+
+---
+
+## 9.1 Database and Performance Strategy
+
+The system uses a hybrid data access approach:
+
+* LINQ is used for general querying
+* stored procedures are used for performance-critical operations
+* raw SQL (FromSqlRaw) is used to integrate stored procedures
+
+### Why this approach:
+
+* LINQ → clean and maintainable
+* SQL → high performance
+* combination → flexibility + scalability
+
+### Performance Improvements:
+
+* reduced memory usage
+* faster queries using indexing
+* avoided full table scans
+* optimized reporting queries
+
+### Optimization Scope Decision
+
+* optimization applied selectively
+* avoided unnecessary complexity
+* balanced performance and maintainability
 
 ---
 
 ## 10. Key Challenges and Solutions
 
-### Challenge: Swagger token issue
-
-**Solution:** fixed Bearer configuration
-
----
-
-### Challenge: 401 vs 403 confusion
-
-**Solution:** tested roles properly
-
----
-
-### Challenge: frontend-backend integration
-
-**Solution:** used services and models
-
----
-
-### Challenge: route security
-
-**Solution:** implemented guards
-
----
-
-### Challenge: Angular UI update issues
-
-**Solution:** used ChangeDetectorRef
-
----
-
-### Challenge: Reporting summary mismatch
-
-**Solution:** fixed dynamic threshold logic
+* Swagger token issue → fixed Bearer config
+* 401 vs 403 confusion → tested roles
+* frontend-backend integration → structured services
+* route security → guards
+* UI update issues → ChangeDetectorRef
+* reporting mismatch → fixed threshold logic
 
 ---
 
@@ -484,9 +449,10 @@ This shows how reporting works from UI to backend and back.
 
 * JWT authentication
 * middleware pipeline
-* EF Core
+* EF Core and LINQ
 * dependency injection
 * reporting logic
+* database optimization
 
 ---
 
@@ -497,7 +463,7 @@ This shows how reporting works from UI to backend and back.
 * interceptors
 * guards
 * reactive forms
-* report UI design
+* report UI
 
 ---
 
@@ -506,7 +472,8 @@ This shows how reporting works from UI to backend and back.
 * end-to-end system flow
 * API communication
 * DTO importance
-* separation of layers
+* layer separation
+* error handling strategy
 
 ---
 
@@ -514,58 +481,14 @@ This shows how reporting works from UI to backend and back.
 
 * request flow
 * stateless systems
-* role-based access
+* RBAC
 * reporting systems
-* data aggregation
+* aggregation
+* performance vs maintainability
 
 ---
 
-## 12. Mistakes and Improvements
-
-* initially no route protection
-* login page accessible after login
-* token expiry not handled
-* reporting summary mismatch
-
-**Improved by:**
-
-* adding guards
-* fixing login flow
-* handling token expiry
-* fixing reporting logic
-
----
-
-## 13. Future Improvements
-
-* advanced analytics (charts, trends)
-* report caching (Redis)
-* scheduled report generation
-* export formats (CSV/Excel)
-* background jobs (Hangfire)
-* CI/CD pipeline
-* cloud deployment (Azure)
-
----
-
-## 14. System Readiness Level
-
-Current system is:
-
-* suitable for small-scale production
-* supports authenticated users
-* maintains data integrity
-* includes basic reporting
-
-Limitations:
-
-* no advanced analytics
-* no caching
-* no background processing
-
----
-
-## 15. Final Reflection
+## 12. Final Reflection
 
 This project helped transition from coding to real engineering.
 
@@ -575,4 +498,9 @@ It improved:
 * architecture understanding
 * full-stack integration
 * security implementation
-* reporting and business logic understanding
+* performance optimization mindset
+* real-world backend design thinking
+
+This project demonstrates the transition from feature development to building a production-ready, performance-aware system.
+
+
